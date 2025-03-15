@@ -1,0 +1,66 @@
+#!/usr/bin/env bun
+
+import { Command } from 'commander';
+import { PersonaGenerator } from './src/index.js';
+import { getDefined } from './src/defined.js';
+import { version } from './package.json';
+import { prettyPrintJson } from './src/utils/json.js';
+
+type Options = Record<'apiKey' | 'baseURL' | 'model', string>;
+
+const program = new Command();
+
+process.once('uncaughtException', (error) => {
+  process.stderr.write(error?.message);
+  process.exit(1);
+});
+
+program
+  .name('persona-generator')
+  .description('The persona-generator is a library designed to transform user input into structured JSON files representing AI agent personas. It converts user friendly descriptions into detailed character profiles')
+  .version(version);
+
+program
+  .option('-k, --api-key <key>', 'OpenAI API key (defaults to env var PRIVATE_OPENAI_COMPATIBLE_API_KEY)')
+  .option('-u, --base-url <url>', 'OpenAI compatible API URL (defaults to env var PUBLIC_OPENAI_COMPATIBLE_API_URL)')
+  .option('-m, --model <model>', 'OpenAI compatible model (defaults to env var PUBLIC_OPENAI_COMPATIBLE_MODEL)')
+  .argument('<content>', 'Text description of the persona to generate')
+  .action(async (content: string, options: Options) => {
+    try {
+      const apiKey = options.apiKey || getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
+      const baseURL = options.baseURL || getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
+      const model = options.model || getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
+
+      const personaGenerator = new PersonaGenerator({
+        apiKey,
+        baseURL,
+        model,
+      });
+
+      const { data, error, status } = await personaGenerator.exec({
+        content,
+      });
+
+      if (!data || error || status !== 'success') throw Error(error);
+
+      // TODO: Validate the data using zod schema parser
+      // otherwise throw error
+
+      const formatted = prettyPrintJson({ data });
+
+      if (!formatted) throw Error('Failed to format the response data');
+
+      process.stdout.write(formatted);
+    } catch (error) {
+      console.error('Error generating persona:', error instanceof Error ? error.message : error);
+
+      process.exit(1);
+    }
+  });
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+  process.exit(0);
+}
+
+await program.parseAsync();

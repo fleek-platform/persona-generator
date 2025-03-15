@@ -1,0 +1,41 @@
+{
+  "name": "@fleek-platform/persona-generator",
+  "version": "0.0.0",
+  "description": "The persona-generator is a library designed to transform user input into structured JSON files representing AI agent personas. It converts user friendly descriptions into detailed character profiles",
+  "repository": "https://github.com/fleek-platform/persona-generator",
+  "homepage": "https://github.com/fleek-platform/persona-generator",
+  "bin": {
+    "persona-generator": "cli"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "changeset:add": "pnpm exec changeset",
+    "changeset:status": "pnpm exec changeset status",
+    "changeset:version": "pnpm exec changeset version",
+    "clean": "pnpm \"/^clean:.*/\"",
+    "clean:dist": "rm -rf dist",
+    "clean:node": "rm -rf node_modules",
+    "format": "pnpm exec biome format --write ./src",
+    "format:check": "pnpm exec biome format ./src"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.28.1",
+    "abort-controller": "^3.0.0",
+    "biome": "^0.3.3",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.87.3",
+    "typescript": "^5.8.2",
+    "zod": "^3.23.4"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
+}
