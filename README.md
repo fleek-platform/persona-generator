@@ -10,6 +10,7 @@ The persona-generator is a library designed to transform user input (natural lan
 - [🤖 Install](#-install)
 - [👷 Development](#-development)
   - [Environment variables](#environment-variables)
+  - [Preview](#preview-server)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
 - [🙏 Contributing](#-contributing)
@@ -53,6 +54,34 @@ NODE_ENV="production"
 ```
 
 The application uses the [getDefined](./src/defined.ts) to lookup for environment variables.
+
+### Preview server
+
+A preview server's available for development purposes. It restarts everytime a project file's modified.
+
+To start the preview server run:
+
+```sh
+pnpm preview
+```
+
+You'll find information about the local server in the output.
+
+```sh
+🐰 Preview server running at http://localhost:3030
+```
+
+Use your favourite client to make requests, e.g. cURL:
+
+```sh
+curl \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
+  }' \
+  http://localhost:3030/persona-generator
+```
 
 ## Changeset
 
