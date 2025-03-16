@@ -65,7 +65,7 @@ export class PersonaGenerator {
 
       return {
         status: 'success',
-        data: JSON.parse(data),
+        data,
         error: '',
       };
     } catch (error) {
