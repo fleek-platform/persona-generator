@@ -1,0 +1,52 @@
+#!/usr/bin/env bun
+
+import { serve } from 'bun';
+
+import { getDefined } from './src/defined.js';
+import { PersonaGenerator } from './src/index.js';
+
+const port = process.env.PORT || '3030';
+
+const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
+const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
+const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
+
+const personaGenerator = new PersonaGenerator({
+  apiKey,
+  baseURL,
+  model,
+});
+
+process.once('uncaughtException', (error) => {
+  process.stderr.write(error?.message);
+  process.exit(1);
+});
+
+serve({
+  port,
+  routes: {
+    '/persona-generator': async (req) => {
+      const { content } = await req.json();
+
+      if (typeof content !== 'string' || !content) throw Error('Unexpected request');
+
+      const { data, error, status } = await personaGenerator.exec({
+        content,
+      });
+
+      if (!data || error || status !== 'success') {
+        return Response.json({
+          status: 'error',
+          error: error || 'Unexpected error',
+        });
+      }
+
+      return Response.json({
+        status: 'success',
+        data,
+      });
+    },
+  },
+});
+
+console.log(`🐰 Preview server running at http://localhost:${port}`);

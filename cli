@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { Command } from 'commander';
-import { PersonaGenerator } from './src/index.js';
+import { PersonaGenerator, ResponseSchema } from './src/index.js';
 import { getDefined } from './src/defined.js';
 import { version } from './package.json';
 import { prettyPrintJson } from './src/utils/json.js';
@@ -43,8 +43,11 @@ program
 
       if (!data || error || status !== 'success') throw Error(error);
 
-      // TODO: Validate the data using zod schema parser
-      // otherwise throw error
+      if (!ResponseSchema.parse({
+        status,
+        data,
+        error,
+      })) throw Error('Unexpected response schema');
 
       const formatted = prettyPrintJson({ data });
 

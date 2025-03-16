@@ -3,7 +3,9 @@ import { z } from 'zod';
 
 import { systemRolePrompt } from '@base/prompts/index.js';
 
-const ResponseSchema = z.object({
+export type ExecResponse = Promise<z.infer<typeof ResponseSchema>>;
+
+export const ResponseSchema = z.object({
   status: z.enum(["success", "error"]),
   data: z.string().optional(),
   error: z.string().optional(),
@@ -37,12 +39,8 @@ export class PersonaGenerator {
     content,
   }: {
     content: string;
-  }): Promise<z.infer<typeof ResponseSchema>> {
-    console.log(`[debug] src/index.ts: content = ${content}`)
-
+  }): ExecResponse {
     const parsedContent = contentSchema.safeParse(content);
-
-    console.log(`[debug] src/index.ts: parsedContent.success = ${parsedContent.success}`)
     
     if (!parsedContent.success) {
       return {
@@ -67,7 +65,7 @@ export class PersonaGenerator {
 
       return {
         status: 'success',
-        data,
+        data: JSON.parse(data),
         error: '',
       };
     } catch (error) {
