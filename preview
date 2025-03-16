@@ -49,4 +49,4 @@ serve({
   },
 });
 
-console.log(`🐰 Preview server running at http://localhost:${port}`);
+process.stdout.write(`🐰 Preview server running at http://localhost:${port}`);
