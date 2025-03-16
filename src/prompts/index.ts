@@ -25,59 +25,123 @@ const CHARACTER_FILE_SCHEMA_TEXT = `{
     },
     voice: {
       model: "en_GB-alan-medium",
-    },
-    plugins: [],
-    bio: [
-      ${mandatoryBasedOnUserDescription('biography', 30, 'personality')},
-    ],
-    lore: [],
-    knowledge: [
-      ${fixedNumberExamplesOf(5, 10, 'knowledge suggested by the user, keep each concise')},
-    ],
-    messageExamples: [
-      [
-        {
-          "user": "{{user1}}",
-          "content": {
-            "text": ${simulateInteraction('question from {{user1}}')},
-          },
-        },
-        {
-          "user": "<User persona name>",
-          "content": {
-            "text": ${simulateInteraction('response to {{user1}} question')},
-          },
-        },
-        {
-          "user": "{{user1}}",
-          "content": {
-            "text": ${simulateInteraction('comment from {{user1}}')},
-          },
-        },
-        {
-          "user": "<User persona name>",
-          "content": {
-            "text": ${simulateInteraction('response to {{user1}} comment')},
-          },
-        },
-      ],
-    ],
-    topics: [
-      ${fixedNumberExamplesOf(4, 8, 'topics based on user suggestions')},
-    ],
-    postExamples: [],
-    style: {
-      "all": [
-        ${fixedNumberExamplesOf(4, 8, 'personality terms based on user suggested personality, e.g. formal, detail-oriented, anxious, etc')},
-      ],
-      "chat": [],
-      "post": []
-    },
-    adjectives: [
-      ${fixedNumberExamplesOf(4, 8, 'adjectives related to user suggested personality')},
-    ],
+    }
   },
+  plugins: [],
+  bio: [
+    ${mandatoryBasedOnUserDescription('biography', 30, 'personality')},
+  ],
+  lore: [
+    ${fixedNumberExamplesOf(4, 8, 'explain its purpose')},
+  ],
+  knowledge: [
+    ${fixedNumberExamplesOf(5, 10, 'knowledge suggested by the user, keep each concise')},
+  ],
+  messageExamples: [
+    [
+      {
+        "user": "{{user1}}",
+        "content": {
+          "text": ${simulateInteraction('question from {{user1}}')},
+        },
+      },
+      {
+        "user": "<User persona name>",
+        "content": {
+          "text": ${simulateInteraction('response to {{user1}} question')},
+        },
+      },
+      {
+        "user": "{{user1}}",
+        "content": {
+          "text": ${simulateInteraction('comment from {{user1}}')},
+        },
+      },
+      {
+        "user": "<User persona name>",
+        "content": {
+          "text": ${simulateInteraction('response to {{user1}} comment')},
+        },
+      },
+    ],
+  ],
+  topics: [
+    ${fixedNumberExamplesOf(4, 8, 'topics based on user suggestions')},
+  ],
+  postExamples: [
+    ${fixedNumberExamplesOf(2, 4, 'post message examples')},
+  ],
+  style: {
+    "all": [
+      ${fixedNumberExamplesOf(4, 8, 'personality terms based on user suggested personality, e.g. formal, detail-oriented, anxious, etc')},
+    ],
+    "chat": [
+      ${fixedNumberExamplesOf(4, 8, 'chat moderation behaviour')},
+    ],
+    "post": [
+      ${fixedNumberExamplesOf(4, 8, 'post attitude')},
+    ]
+  },
+  adjectives: [
+    ${fixedNumberExamplesOf(4, 8, 'adjectives related to user suggested personality')}
+  ]
 }`;
+
+const requiredSchema = `
+{
+  "name": "",
+  "clients": [""],
+  "modelProvider": "",
+  "settings": {
+    "secrets": {
+      "OPENAI_API_KEY": "",
+      "TWITTER_USERNAME": "",
+      "TWITTER_PASSWORD": "",
+      "TWITTER_EMAIL": "",
+      "TWITTER_2FA_SECRET": "",
+      "POST_IMMEDIATELY": "",
+      "ENABLE_ACTION_PROCESSING": "",
+      "MAX_ACTIONS_PROCESSING": "",
+      "POST_INTERVAL_MAX": "",
+      "POST_INTERVAL_MIN": "",
+      "TWITTER_SPACES_ENABLE": "",
+      "ACTION_TIMELINE_TYPE": "",
+      "TWITTER_POLL_INTERVAL": ""
+    },
+    "voice": {
+      "model": ""
+    }
+  },
+  "plugins": [],
+  "bio": [""],
+  "lore": [""],
+  "knowledge": [""],
+  "messageExamples": [
+    [
+      {
+        "user": "",
+        "content": {
+          "text": ""
+        }
+      },
+      {
+        "user": "",
+        "content": {
+          "text": ""
+        }
+      }
+    ]
+  ],
+  "topics": [""],
+  "postExamples": [""],
+  "style": {
+    "all": [""],
+    "chat": [""],
+    "post": [""]
+  },
+  "adjectives": [""]
+}
+`;
 
 export const systemRolePrompt = `
 You are a specialized JSON data generator. Your STRICT purpose is to generate valid, well-structured JSON data based on user requests and ALWAYS based on the provided schema.
@@ -91,10 +155,7 @@ IMPORTANT INSTRUCTIONS:
 3. Always follow this schema when generating data:
 ${CHARACTER_FILE_SCHEMA_TEXT}
 
-4. ALWAYS include these standard fields in the response:
-- "status": "success" or "error"
-- "data": <the requested data structure>
-- "error": Only if an error occurs and MUST describe concisely
+4. The Data structure schema or fields MUST STRICTLY OBEY the schema ${requiredSchema}
 
 5. Deterministic approach to field ordering:
 - Sort all object keys alphabetically
@@ -117,6 +178,7 @@ ${CHARACTER_FILE_SCHEMA_TEXT}
 - Descriptions of what the JSON represents
 - Prefix Object
 - Prefix json
+- Set empty or null values as "" or [] and never null
 
 8. MUST STRICTLY VERIFY the JSON response to ensure it is valid and can be parsed with JSON.parse() in Node.js
 

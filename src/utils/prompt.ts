@@ -64,6 +64,6 @@ export const someExamplesIncluding = (min: number, max: number, include: string)
 
 export const putUserTermOrCreateOne = (term: string, count: number) => `<${getTerm('MUST')} use ${term} requested by user, if user failed to provide, ${getTerm('MUST')} create ${term}, ${getTerm('UP TO A MAXIMUM OF')} ${count} characters>`;
 
-export const userInputIf = (key: string) => `<If ${key} provided put it here>`;
+export const userInputIf = (key: string) => `<If ${key} provided put it here otherwise remove the property>`;
 
 export const simulateInteraction = (description: string) => `<${getTerm('MUST')} simulate ${description}>`
