@@ -24,7 +24,7 @@
     "clean:node": "rm -rf node_modules",
     "format": "pnpm exec biome format --write ./src",
     "format:check": "pnpm exec biome format ./src",
-    "preview": "bun --watch ./preview"
+    "preview": "pnpm exec bun --watch ./preview"
   },
   "dependencies": {
     "@changesets/cli": "^2.28.1",
