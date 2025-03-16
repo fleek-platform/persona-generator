@@ -82,6 +82,19 @@ curl \
   }' \
   http://localhost:3030/persona-generator
 ```
+Here's an example using fetch:
+
+```ts
+fetch('http://localhost:3030/persona-generator', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    content: "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
+  })
+});
+```
 
 ## Changeset
 
