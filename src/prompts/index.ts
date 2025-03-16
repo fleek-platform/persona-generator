@@ -1,72 +1,82 @@
 import { CLIENT_NAMES } from '@base/config/clients.ts';
 import { MODEL_PROVIDER_NAMES } from '@base/config/modelProviders.ts';
+import { characterfileSchema } from '@base/config/schema.ts';
+import { strictlyMatchTermList, mandatoryBasedOnUserDescription, someExamplesIncluding, fixedNumberExamplesOf, putUserTermOrCreateOne, pickMatchTermFromList, userInputIf, simulateInteraction } from '@utils/prompt.ts';
 
-export const CHARACTER_FILE_SCHEMA_TEXT = `
-{
-  "name": "<If user has not provided a name, name it but keep it a maximum of 12 characters>",
-  "clients": [
-    "<If any of the following clients: ${CLIENT_NAMES.join(', ')}, is mentioned by the user, put each match in a separate line. MUST match the list term>"
-  ],
-  "modelProvider": "<If any of the following models: ${MODEL_PROVIDER_NAMES.join(', ')}, is mention by the user, pick a single match a put it here>",
-  "settings": {
-    "secrets": {
-      "OPENAI_API_KEY": "<If provided put it here>",
-      "TWITTER_USERNAME": "<If provided put it here, otherwise empty string>",
-      "TWITTER_PASSWORD": "<If provided put it here, otherwise empty string>",
-      "TWITTER_EMAIL": "<If provided put it here, otherwise empty string>",
-      "TWITTER_2FA_SECRET": "<If provided put it here, otherwise empty string>",
-      "POST_IMMEDIATELY": "true",
-      "ENABLE_ACTION_PROCESSING": "true",
-      "MAX_ACTIONS_PROCESSING": "10",
-      "POST_INTERVAL_MAX": "180",
-      "POST_INTERVAL_MIN": "90",
-      "TWITTER_SPACES_ENABLE": "false",
-      "ACTION_TIMELINE_TYPE": "foryou",
-      "TWITTER_POLL_INTERVAL": "120"
+const CHARACTER_FILE_SCHEMA_TEXT = `{
+  name: ${putUserTermOrCreateOne('name', 12)},
+  clients: [${strictlyMatchTermList(CLIENT_NAMES)}],
+  modelProvider: ${pickMatchTermFromList(MODEL_PROVIDER_NAMES, 'model', 1)},
+  settings: {
+    secrets: {
+      OPENAI_API_KEY: ${userInputIf('OPENAI_API_KEY')},
+      TWITTER_USERNAME: ${userInputIf('TWITTER_USERNAME')},
+      TWITTER_PASSWORD: ${userInputIf('TWITTER_PASSWORD')},
+      TWITTER_EMAIL: ${userInputIf('TWITTER_EMAIL')},
+      TWITTER_2FA_SECRET: ${userInputIf('TWITTER_2FA_SECRET')},
+      POST_IMMEDIATELY: "true",
+      ENABLE_ACTION_PROCESSING: "true",
+      MAX_ACTIONS_PROCESSING: "10",
+      POST_INTERVAL_MAX: "180",
+      POST_INTERVAL_MIN: "90",
+      TWITTER_SPACES_ENABLE: "false",
+      ACTION_TIMELINE_TYPE: "foryou",
+      TWITTER_POLL_INTERVAL: "120"
     },
-    "voice": {
-      "model": "en_GB-alan-medium"
-    }
-  },
-  "plugins": [],
-  "bio": [
-    "<Create a short biography up to 30 words inspired in the user suggested personality>"
-  ],
-  "lore": [],
-  "knowledge": [
-    "<Provide up to 10 lines of knowledge suggested by the user in this array, keep each concise>"
-  ],
-  "messageExamples": [
-    [
-      {
-        "user": "{{user1}}",
-        "content": {
-          "text": "<Simulate a question from user>"
-        }
-      },
-      {
-        "user": "<User persona name>",
-        "content": {
-          "text": "<Simulate a response to user question>"
-        }
-      },
-      ...<extend with a maximum of 4 other message examples to simulate an actual conversation. Must utilize {{user1}} to refer to the user>
+    voice: {
+      model: "en_GB-alan-medium",
+    },
+    plugins: [],
+    bio: [
+      ${mandatoryBasedOnUserDescription('biography', 30, 'personality')},
     ],
-  ],
-  "topics": [
-    "<Provide up to 5 lines of topics based on user suggestions in this array>"
-  ],
-  "postExamples": [],
-  "style": {
-    "all": [
-      "<Provide up to 5 lines of personality like terms based on user suggested personage, e.g. formal, detail-oriented, anxious, etc>"
+    lore: [],
+    knowledge: [
+      ${fixedNumberExamplesOf(5, 10, 'knowledge suggested by the user, keep each concise')},
     ],
-    "chat": [],
-    "post": []
+    messageExamples: [
+      [
+        {
+          "user": "{{user1}}",
+          "content": {
+            "text": ${simulateInteraction('question from {{user1}}')},
+          },
+        },
+        {
+          "user": "<User persona name>",
+          "content": {
+            "text": ${simulateInteraction('response to {{user1}} question')},
+          },
+        },
+        {
+          "user": "{{user1}}",
+          "content": {
+            "text": ${simulateInteraction('comment from {{user1}}')},
+          },
+        },
+        {
+          "user": "<User persona name>",
+          "content": {
+            "text": ${simulateInteraction('response to {{user1}} comment')},
+          },
+        },
+      ],
+    ],
+    topics: [
+      ${fixedNumberExamplesOf(4, 8, 'topics based on user suggestions')},
+    ],
+    postExamples: [],
+    style: {
+      "all": [
+        ${fixedNumberExamplesOf(4, 8, 'personality terms based on user suggested personality, e.g. formal, detail-oriented, anxious, etc')},
+      ],
+      "chat": [],
+      "post": []
+    },
+    adjectives: [
+      ${fixedNumberExamplesOf(4, 8, 'adjectives related to user suggested personality')},
+    ],
   },
-  "adjectives": [
-    "<Provide up to 5 lines of adjectives related to user suggeste personality>"
-  ]
 }`;
 
 export const systemRolePrompt = `
@@ -99,14 +109,16 @@ ${CHARACTER_FILE_SCHEMA_TEXT}
 - Ensure all required fields are present and properly filled
 - Optional fields can be null or omitted if not provided
 
-7. NEVER include:
+7. MUST STRICTLY NOT include:
 - Comments or explanations
 - Markdown formatting
-- Code block delimiters (\`\`\`)
+- Code block delimiters (\`\`\`) or \`\`\`
 - HTML tags
 - Descriptions of what the JSON represents
+- Prefix Object
+- Prefix json
 
-8. ALWAYS test your JSON response to ensure it is valid and can be parsed with JSON.parse() in Node.js
+8. MUST STRICTLY VERIFY the JSON response to ensure it is valid and can be parsed with JSON.parse() in Node.js
 
-Remember: Your output must be ONLY the JSON data structure, nothing else. The user will directly parse your response with JSON.parse().
+Remember that is CRITICAL that the output must be ONLY the JSON data structure, nothing else. The user will directly parse your response with JSON.parse(), it MUST be a valid JSON.
 `;
