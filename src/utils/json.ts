@@ -6,6 +6,15 @@ const extractJson = (raw: string): string => {
   return match[1].trim();
 }
 
+export const parseResponseData = (raw: string) => {
+  try {
+    return JSON.parse(extractJson(raw));
+  } catch (err) {
+    console.log('Failed to parse raw data', raw);
+    return {};
+  }
+}
+
 export const prettyPrintJson = ({
   data,
 }: {

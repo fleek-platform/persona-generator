@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-import { systemRolePrompt } from '@base/prompts/index.js';
+import { systemRolePrompt, systemAssistantRolePrompt } from '@base/prompts/index.js';
 
 export type ExecResponse = Promise<z.infer<typeof ResponseSchema>>;
 
@@ -35,7 +35,7 @@ export class PersonaGenerator {
     this.model = model;
   }
 
-  async exec({
+  async generateCharacterfile({
     content,
   }: {
     content: string;
@@ -69,6 +69,44 @@ export class PersonaGenerator {
         error: '',
       };
     } catch (error) {
+      return {
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  async assistantQuery({
+    content,
+    messages,
+  }: {
+    content: string;
+    messages: string;
+  }): ExecResponse {
+  console.log('[debug]', systemAssistantRolePrompt.replace('$messages', JSON.stringify(messages)))
+    try {
+      const completion = await this.openai.chat.completions.create({
+        messages: [{
+          role: "system",
+          content: systemAssistantRolePrompt.replace('$messages', messages),
+        }, {
+          role: 'user',
+          content,    
+        }],
+        model: this.model,
+      });
+
+      console.log(completion.choices)
+
+      const data = completion.choices[0].message.content || '';
+
+      return {
+        status: 'success',
+        data,
+        error: '',
+      };
+    } catch (error) {
+      console.log('error?', error)
       return {
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error occurred',
