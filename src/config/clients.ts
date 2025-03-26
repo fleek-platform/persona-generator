@@ -3,9 +3,5 @@ export const CLIENT_NAMES = [
   'twitter',
   'telegram',
   'direct',
-  'farcaster',
-  'lens',
-  'auto',
   'slack',
-  'github',
 ] as const;
