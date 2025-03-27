@@ -54,6 +54,8 @@ const getTerm = <T extends StrictTerms>(opt: T) => opt;
 
 export const strictlyMatchTermList = (list: readonly string[]) => `<${getTerm('MUST')} match ${getTerm('ONLY FROM')} the following list: ${list.join(', ')}>`;
 
+export const strictlyMatchTermListOrFallback = (list: readonly string[], name: string, fallback: string) => `<${getTerm('MUST')} match ${getTerm('ONLY FROM')} the following list: ${list.join(', ')}. If a ${name} has not been provided fallback to ${fallback}>`;
+
 export const pickMatchTermFromList = (list: readonly string[], requested: string, count: number) => `<${getTerm('MUST STRICTLY')} find ${count} match for ${requested}, ${getTerm('FROM')} the following list: ${list.join(', ')}>`;
 
 export const mandatoryBasedOnUserDescription = (term: string, count: number, context: string) => `<${getTerm('MUST')} create a short ${term}, ${getTerm('NO MORE THAN')} ${count} words, ${getTerm('BASED SOLELY ON')} user requested ${context}>`;
@@ -63,6 +65,8 @@ export const fixedNumberExamplesOf = (min: number, max: number, description: str
 export const someExamplesIncluding = (min: number, max: number, include: string) => `...<${getTerm('AT LEAST')} ${min}, ${getTerm('UP TO A MAXIMUM OF')} ${max}, ${getTerm('MUST')} be ${getTerm('INCLUDE')} ${include}>`;
 
 export const putUserTermOrCreateOne = (term: string, count: number) => `<${getTerm('MUST')} use ${term} requested by user, if user failed to provide, ${getTerm('MUST')} create ${term}, ${getTerm('UP TO A MAXIMUM OF')} ${count} characters>`;
+
+export const putAssistantTerm = (term: string) => `<${getTerm('MUST')} use ${term} described by Assistant, if user failed to provide, ${getTerm('MUST')} create ${term}>`;
 
 export const userInputIf = (key: string) => `<If ${key} provided put it here otherwise remove the property>`;
 
