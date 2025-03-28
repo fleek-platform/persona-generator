@@ -6,7 +6,7 @@ import { parseResponseData } from '../../src/utils/json.js';
 
 export const app = new Hono().basePath('/v1');
 
-app.get('/health', (ctx) => ctx.text('I here live. I am not a cat!'));
+app.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
 
 // TODO: Setup access control allow origin
 // to acccept only known hostnames
