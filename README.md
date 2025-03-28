@@ -85,13 +85,13 @@ curl \
   -d '{
     "content": "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
   }' \
-  http://localhost:3030/persona-generator
+  http://localhost:3030/generate
 ```
 
 An example using fetch:
 
 ```ts
-fetch('http://localhost:3030/persona-generator', {
+fetch('http://localhost:3030/generate', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
