@@ -29,6 +29,7 @@
     "clean:dist": "rm -rf dist",
     "clean:node": "rm -rf node_modules",
     "lambda:preview": "pnpm build && LAMBDA_RUNNER_MODE=\"dist\" sls dev",
+    "lambda:deploy": "pnpm build && LAMBDA_RUNNER_MODE=\"dist\" sls deploy",
     "format": "pnpm exec biome format --write ./src",
     "format:check": "pnpm exec biome format ./src",
     "preview": "pnpm exec bun --watch ./preview"

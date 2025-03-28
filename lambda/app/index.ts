@@ -1,21 +1,21 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
 import { getDefined } from '../../src/defined.js';
 import { parseResponseData } from '../../src/utils/json.js';
+// import { PersonaGenerator } from '../../dist/index.js';
 
 export const app = new Hono().basePath('/v1');
 
-app.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
+app.use('/*', cors({
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'Priority'],
+  maxAge: 86400,
+  credentials: true,
+}));
 
-// TODO: Setup access control allow origin
-// to acccept only known hostnames
-// e.g. fleek.xyz, fleeksandbox.xyz
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
-  'Access-Control-Max-Age': '86400',
-};
+app.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
 
 const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
 const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
@@ -34,40 +34,32 @@ const personaGenerator = new PersonaGenerator({
   model,
 });
 
-app.post('/generate', async (ctx) => {
-  if (ctx.req.method === 'OPTIONS') {
-    return ctx.newResponse(null, { status: 204, headers });
-  }
+// app.post('/generate', async (ctx) => {
+//   const { content } = await ctx.req.json();
+//   if (typeof content !== 'string' || !content) {
+//     return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
+//   }
 
-  const { content } = await ctx.req.json();
-  if (typeof content !== 'string' || !content) {
-    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
-  }
+//   const { data, error, status } = await personaGenerator.generateCharacterfile({ content });
 
-  const { data, error, status } = await personaGenerator.generateCharacterfile({ content });
+//   if (!data || error || status !== 'success') {
+//     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
+//   }
 
-  if (!data || error || status !== 'success') {
-    return ctx.json({ status: 'error', error: error || 'Unexpected error' });
-  }
+//   return ctx.json({ status: 'success', data: parseResponseData(data) });
+// });
 
-  return ctx.json({ status: 'success', data: parseResponseData(data) });
-});
+// app.post('/assistant', async (ctx) => {
+//   const { content, messages } = await ctx.req.json();
+//   if (typeof content !== 'string' || !content) {
+//     return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
+//   }
 
-app.post('/assistant', async (ctx) => {
-  if (ctx.req.method === 'OPTIONS') {
-    return ctx.newResponse(null, { status: 204, headers });
-  }
+//   const { data, error, status } = await personaGenerator.assistantQuery({ content, messages });
 
-  const { content, messages } = await ctx.req.json();
-  if (typeof content !== 'string' || !content) {
-    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
-  }
+//   if (!data || error || status !== 'success') {
+//     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
+//   }
 
-  const { data, error, status } = await personaGenerator.assistantQuery({ content, messages });
-
-  if (!data || error || status !== 'success') {
-    return ctx.json({ status: 'error', error: error || 'Unexpected error' });
-  }
-
-  return ctx.json({ status: 'success', data });
-});
+//   return ctx.json({ status: 'success', data });
+// });
