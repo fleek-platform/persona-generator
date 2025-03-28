@@ -15,6 +15,11 @@
     "README.md",
     "CHANGELOG.md"
   ],
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./PersonaGenerator": "./dist/index.js"
+  },
   "scripts": {
     "build": "pnpm exec bund build.ts",
     "changeset:add": "pnpm exec changeset",
