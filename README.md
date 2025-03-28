@@ -11,6 +11,7 @@ The persona-generator is a library designed to transform user input (natural lan
 - [👷 Development](#-development)
   - [Environment variables](#environment-variables)
   - [Preview](#preview-server)
+- [⚕ Lambda](#lambda)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
 - [🙏 Contributing](#-contributing)
@@ -205,6 +206,79 @@ trotting, relying on the internet to stay updated on crime."
   "error": null,
   "status": "success"
 }
+```
+
+## Lambda
+
+The application's serviced by AWS Lambda leveraging a serverless setup. Our lambda's handler based in [Hono](https://hono.dev).
+
+Find the [serverless.yml](./serverless.yml) in the root directory. It requires an environment specific configuration details in a config.yml file (relevant to ops).
+
+### Config
+
+For operations (devOps), you must setup the `config.yml` in the root:
+
+```yaml
+customDomain:
+  certificateArn: arn:aws:acm:<REGION>:<AWS-ACCOUNT-ID>:certificate/<AWS-CERTIFICATE-MANAGER-ACM-ARN>
+  domainName: <CUSTOM-DOMAIN-NAME>
+
+provider:
+  runtime: nodejs20.x
+  region: <REGION>
+  stage: <ENVIRONMENT>
+```
+
+You can find the certificate ACM ARN in **https://<REGION>.console.aws.amazon.com/acm/home?region=<REGION>#/certificates/list
+**.
+
+When customising DNS remember to flush your local DNS cache, e.g. macOS:
+
+```sh
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
+```
+
+### Details
+
+The application routes computes requests allowed by our [serverless](./serverless.yml) setup. You may find that a wildcard's declared to allow any income or method request. Otherwise, specificity's required to allow it to reach into the app to resolve it. Thus, if you find in a situation which you can't ping an endpoint it might be that wildcards' disabled, requiring to expose the route in the serverless settings.
+
+Here's an example of quick health checkup via the production hostname:
+
+```sh
+curl -X GET \
+  https://lambda.flkservices.io/v1/health
+```
+
+It's mapped into endpoint:
+
+```sh
+curl -X GET \
+  https://02xuym9fgk.execute-api.eu-west-2.amazonaws.com/prod/health
+```
+
+For any other routes, read the [lambda/index](./lambda/index.ts).
+
+### Commands
+
+The following commands require you to have an AWS account with permissions to interact with the resources.
+
+Dev Mode redirects live AWS Lambda events to local:
+
+```sh
+sls dev
+```
+
+Deploy the service as a lambda:
+
+```sh
+sls deploy
+```
+
+Get service details:
+
+```
+sls info --verbose
 ```
 
 ## Changeset

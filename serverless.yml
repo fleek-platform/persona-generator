@@ -1,0 +1,28 @@
+service: persona-generator
+
+provider:
+  name: aws
+  runtime: ${file(./config.yml):provider.runtime}
+  region: ${file(./config.yml):provider.region}
+  stage: ${file(./config.yml):provider.stage}
+
+functions:
+  app:
+    handler: lambda/index.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: ${file(./config.yml):customDomain.domainName}
+    certificateArn: ${file(./config.yml):customDomain.certificateArn}
+    basePath: v1
+    stage: ${self:provider.stage}
+    createRoute53Record: false
+    endpointType: regional
+    securityPolicy: tls_1_2
+

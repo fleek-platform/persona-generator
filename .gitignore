@@ -30,3 +30,7 @@ dist
 
 # formatting
 .vscode
+
+# serverless
+.serverless
+config.yml
