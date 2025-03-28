@@ -60,9 +60,8 @@ The application uses the [getDefined](./src/defined.ts) to lookup for environmen
 
 A preview server's available for development purposes. It restarts everytime a project file's modified.
 
-:::warning
-The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment. If you'd like to test lambda's locally, learm more about it in [Lambda](#lambda) section.
-:::
+> [!WARNING]  
+> The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment. If you'd like to test lambda's locally, learm more about it in [Lambda](#lambda) section.
 
 To start the preview server run:
 
@@ -217,6 +216,33 @@ trotting, relying on the internet to stay updated on crime."
 The application's serviced by AWS Lambda leveraging a serverless setup. Our lambda's handler based in [Hono](https://hono.dev).
 
 Find the [serverless.yml](./serverless.yml) in the root directory. It requires an environment specific configuration details in a config.yml file (relevant to ops).
+
+To operate locally, you must have aws configured. For example, its common to have previously configured it by:
+
+```
+aws configure
+```
+
+You must have the `~/.aws` configuration and credentials. For example `~/.aws/credentials`:
+
+```sh
+[default]
+aws_access_key_id = <AWS-ACCESS-KEY-ID>
+aws_secret_access_key = <AWS-SECRET-ACCESS-KEY>
+```
+
+> [!IMPORTANT]  
+> Find the AWS Access key in the AWS Dashboard's **IAM > Users > Username**. The AWS Secret Access key requires you to create a new access key.
+
+Here's an example for `~/.aws/config`
+
+```sh
+[default]
+region = <REGION>
+output = json
+```
+
+
 
 ### Config
 
