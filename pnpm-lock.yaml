@@ -41,6 +41,10 @@ importers:
       zod:
         specifier: ^3.23.4
         version: 3.24.2
+    devDependencies:
+      serverless-vpc-plugin:
+        specifier: ^1.0.6
+        version: 1.0.6
 
 packages:
 
@@ -818,6 +822,9 @@ packages:
     resolution: {integrity: sha512-pbnl5XzGBdrFU/wT4jqmJVPn2B6UHPBOhzMQkY/SPUPB6QtUXtmBHBIwCbXJol93mOpGMnQyP/+BB19q04xj7g==}
     engines: {node: '>=4'}
 
+  bignumber.js@7.2.1:
+    resolution: {integrity: sha512-S4XzBk5sMB+Rcb/LNcpzXr57VRTxgAvaAEDAl1AwRx27j00hT84O6OkteE7u8UB3NuaaygCRrEpqox4uDOrbdQ==}
+
   biome@0.3.3:
     resolution: {integrity: sha512-4LXjrQYbn9iTXu9Y4SKT7ABzTV0WnLDHCVSd2fPUOKsy1gQ+E4xPFmlY1zcWexoi0j7fGHItlL6OWA2CZ/yYAQ==}
     hasBin: true
@@ -863,6 +870,9 @@ packages:
   ci-info@3.9.0:
     resolution: {integrity: sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==}
     engines: {node: '>=8'}
+
+  cidr-split@0.1.2:
+    resolution: {integrity: sha512-kGtEi2XkWDPZJrIASRgwIW7VauA7i5bc7GBt06I4XQJPIRjbD0QtKr2HzW1FsRxIGi+IaGta98r2BvwU1uWmNQ==}
 
   cli-cursor@1.0.2:
     resolution: {integrity: sha512-25tABq090YNKkF6JH7lcwO0zFJTRke4Jcq9iX2nr/Sz0Cjjv4gckmwlW6Ty/aoyFd6z3ysR2hMGC2GFugmBo6A==}
@@ -1596,6 +1606,10 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       serverless: '>=3'
+
+  serverless-vpc-plugin@1.0.6:
+    resolution: {integrity: sha512-3x5Yo5XLduQm1QpPuG37bMqE7cB+/zz/k9oESaETvSmOvi+doWgfS5wTXAvwqt9xgHdb8lK6onQh7vGAGJwTww==}
+    engines: {node: '>=12.0'}
 
   serverless@4.9.1:
     resolution: {integrity: sha512-JkAHMPTsHUtddaXjT61/190pK3nYCBMg/lau2RBhzRxzZ4CIjGGhswhBQrYi6KgPK89LiLM12S9njGQxmScT3Q==}
@@ -3413,6 +3427,8 @@ snapshots:
     dependencies:
       is-windows: 1.0.2
 
+  bignumber.js@7.2.1: {}
+
   biome@0.3.3:
     dependencies:
       bluebird: 3.7.2
@@ -3479,6 +3495,10 @@ snapshots:
   chardet@0.7.0: {}
 
   ci-info@3.9.0: {}
+
+  cidr-split@0.1.2:
+    dependencies:
+      bignumber.js: 7.2.1
 
   cli-cursor@1.0.2:
     dependencies:
@@ -4230,6 +4250,10 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
       - supports-color
+
+  serverless-vpc-plugin@1.0.6:
+    dependencies:
+      cidr-split: 0.1.2
 
   serverless@4.9.1:
     dependencies:

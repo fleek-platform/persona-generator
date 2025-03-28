@@ -15,6 +15,7 @@ functions:
           method: any
 plugins:
   - serverless-domain-manager
+#   - serverless-vpc-plugin
 
 custom:
   customDomain:
@@ -26,3 +27,38 @@ custom:
     endpointType: regional
     securityPolicy: tls_1_2
 
+  # vpc:
+  #   cidr: '10.0.0.0/16'
+  #   zones:
+  #     - ${self:provider.region}a
+  #     - ${self:provider.region}b
+  #   subnetGroups:
+  #     - name: LambdaSubnets
+  #       type: private
+  #       tags:
+  #         - Key: Name
+  #           Value: lambda-private-subnet
+
+  # vpc:
+  #   cidr: '10.0.0.0/16'
+  #   useNatGateway: true
+
+# package:
+#   individually: true
+#   patterns:
+#     - '!node_modules/**'
+#     - '!.git/**'
+#     - '!.github/**'
+#     - '!.vscode/**'
+#     - '!test/**'
+#     - '!src/**'
+#     - '!dist/**'
+#     - '!.env*'
+#     - '!README.md'
+#     - '!CHANGELOG.md'
+#     - '!package.json'
+#     - '!package-lock.json'
+#     - '!pnpm-lock.json'
+#     - '!tsconfig.json'
+#     - '!.eslintrc.js'
+#     - '!.prettierrc'

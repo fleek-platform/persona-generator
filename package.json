@@ -51,5 +51,8 @@
     "bun": ">=1.2.7",
     "pnpm": ">=9",
     "node": ">=20.18.0"
+  },
+  "devDependencies": {
+    "serverless-vpc-plugin": "^1.0.6"
   }
 }
