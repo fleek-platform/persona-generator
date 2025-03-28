@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 
 import { getDefined } from '../../src/defined.js';
-import { PersonaGenerator } from '../../dist/index.js';
 import { parseResponseData } from '../../src/utils/json.js';
 
 export const app = new Hono().basePath('/v1');
@@ -21,6 +20,13 @@ const headers = {
 const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
 const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
 const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
+
+// TODO: Find a solution to replace node-fetch of openai
+// due to `Error: Dynamic require of "stream" is not supported`
+// which cause need to prebuild running lambda, e.g. sls dev
+const PersonaGenerator = process.env.LAMBDA_RUNNER_MODE === 'dist'
+  ? (await import('../../dist/index.js')).PersonaGenerator
+  : (await import('../../src/index.js')).PersonaGenerator
 
 const personaGenerator = new PersonaGenerator({
   apiKey,

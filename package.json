@@ -21,13 +21,14 @@
     "./PersonaGenerator": "./dist/index.js"
   },
   "scripts": {
-    "build": "pnpm exec bund build.ts",
+    "build": "pnpm exec bun build.ts",
     "changeset:add": "pnpm exec changeset",
     "changeset:status": "pnpm exec changeset status",
     "changeset:version": "pnpm exec changeset version",
     "clean": "pnpm \"/^clean:.*/\"",
     "clean:dist": "rm -rf dist",
     "clean:node": "rm -rf node_modules",
+    "lambda:preview": "pnpm build && LAMBDA_RUNNER_MODE=\"dist\" sls dev",
     "format": "pnpm exec biome format --write ./src",
     "format:check": "pnpm exec biome format ./src",
     "preview": "pnpm exec bun --watch ./preview"

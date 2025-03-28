@@ -12,6 +12,11 @@ The persona-generator is a library designed to transform user input (natural lan
   - [Environment variables](#environment-variables)
   - [Preview](#preview-server)
 - [⚕ Lambda](#lambda)
+  - [Config](#config)
+  - [Details](#details)
+  - [Commands](#commands)
+  - [Distribution](#distribution)
+  - [Lambda Preview](#lambda-preview)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
 - [🙏 Contributing](#-contributing)
@@ -52,9 +57,13 @@ PUBLIC_OPENAI_COMPATIBLE_API_URL=***
 PUBLIC_OPENAI_COMPATIBLE_MODEL=***
 PUBLIC_FLEEK_REST_API_URL="https://api.fleek.xyz"
 NODE_ENV="production"
+LAMBDA_RUNNER_MODE="dev"
 ```
 
 The application uses the [getDefined](./src/defined.ts) to lookup for environment variables.
+
+> [!IMPORTANT]
+> The app to run in lambda has to be prebuilt. You must set LAMBDA_RUNNER_MODE = "dist" for distribution, e.g. deploying the lambda. For development, the [preview server](#preview-server) allows you to make rapid local changes.
 
 ### Preview server
 
@@ -242,8 +251,6 @@ region = <REGION>
 output = json
 ```
 
-
-
 ### Config
 
 For operations (devOps), you must setup the `config.yml` in the root:
@@ -309,6 +316,31 @@ Get service details:
 
 ```
 sls info --verbose
+```
+
+### Distribution
+
+The app to run in lambda has to be prebuilt. You must set LAMBDA_RUNNER_MODE = "dist" for distribution, e.g. deploying the lambda. For development, the [preview server](#preview-server) allows you to make rapid local changes.
+
+### Lambda Preview
+
+The lambda previewer provides the mechnanism to start the dev mode of what AWS provides as a service. It's a bit different from [preview server](#preview-server), as it tries to simulate AWS lambda locally and hydrate onto the cloud only when requested.
+
+> [!WARNING]  
+> To operate locally, you must have aws configured.
+
+> [!WARNING]  
+> The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment. If you'd like to test lambda's locally, learm more about it in [Lambda](#lambda) section.
+
+> [!WARNING]
+> Find a solution to replace node-fetch of openai
+due to `Error: Dynamic require of "stream" is not supported`
+which cause need to prebuild running lambda, e.g. sls dev
+
+Start the lambda preview locally by:
+
+```sh
+pnpm lambda:preview
 ```
 
 ## Changeset
