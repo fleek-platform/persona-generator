@@ -60,6 +60,10 @@ The application uses the [getDefined](./src/defined.ts) to lookup for environmen
 
 A preview server's available for development purposes. It restarts everytime a project file's modified.
 
+:::warning
+The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment. If you'd like to test lambda's locally, learm more about it in [Lambda](#lambda) section.
+:::
+
 To start the preview server run:
 
 ```sh

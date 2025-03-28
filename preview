@@ -2,101 +2,13 @@
 
 import { serve } from 'bun';
 
-import { getDefined } from './src/defined.js';
-import { PersonaGenerator } from './src/index.js';
-import { parseResponseData } from './src/utils/json.js';
+import { app } from './lambda/app';
 
 const port = process.env.PORT || '3030';
 
-const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
-const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
-const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
-
-const personaGenerator = new PersonaGenerator({
-  apiKey,
-  baseURL,
-  model,
-});
-
-process.once('uncaughtException', (error) => {
-  process.stderr.write(error?.message);
-  process.exit(1);
-});
-
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
-  'Access-Control-Max-Age': '86400',
-};
-
-const responseJson = (data: unknown, status: number = 200): Response => {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers,
-  });
-};
-
-const corsPreflightResponse = () =>
-  new Response(null, {
-    status: 204,
-    headers,
-  });
-
 serve({
+  fetch: app.fetch,
   port,
-  routes: {
-    '/generate': async (req) => {
-      if (req.method === 'OPTIONS') {
-        return corsPreflightResponse();
-      }
-      const { content } = await req.json(); 
-
-      if (typeof content !== 'string' || !content) throw Error('Unexpected request');
-
-      const { data, error, status } = await personaGenerator.generateCharacterfile({
-        content,
-      });
-
-      if (!data || error || status !== 'success') {
-        return responseJson({
-          status: 'error',
-          error: error || 'Unexpected error',
-        });
-      }
-
-      return responseJson({
-        status: 'success',
-        data: parseResponseData(data),
-      });
-    },
-    '/assistant': async (req) => {
-      if (req.method === 'OPTIONS') {
-        return corsPreflightResponse();
-      }
-
-      const { content, messages } = await req.json(); 
-
-      if (typeof content !== 'string' || !content) throw Error('Unexpected request');
-
-      const { data, error, status } = await personaGenerator.assistantQuery({
-        content,
-        messages,
-      });
-
-      if (!data || error || status !== 'success') {
-        return responseJson({
-          status: 'error',
-          error: error || 'Unexpected error',
-        });
-      }
-
-      return responseJson({
-        status: 'success',
-        data,
-      });
-    },
-  },
 });
 
-process.stdout.write(`🐰 Preview server running at http://localhost:${port}`);
+process.stdout.write(`🐰 Preview API running at http://localhost:${port}`);
