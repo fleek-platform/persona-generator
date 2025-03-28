@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 
 import { getDefined } from '../../src/defined.js';
-import { PersonaGenerator } from '../../src/index.js';
+import { PersonaGenerator } from '../../dist/index.js';
 import { parseResponseData } from '../../src/utils/json.js';
 
 export const app = new Hono().basePath('/v1');
