@@ -206,7 +206,7 @@ Message = {
   senderName
 }
 
-Once there has been at least 5 messages, the response MUST contain the text "ready to deploy". You can only use "ready to deploy" once there has been at least 5 messages.
+Once there has been at least 8 messages, the response MUST contain the text "ready to deploy". You can only use "ready to deploy" once there has been at least 8 messages.
 
 IMPORTANT INSTRUCTIONS:
 
