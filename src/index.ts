@@ -83,7 +83,7 @@ export class PersonaGenerator {
     content: string;
     messages: string;
   }): ExecResponse {
-  console.log('[debug]', systemAssistantRolePrompt.replace('$messages', JSON.stringify(messages)))
+    console.log('[debug]', systemAssistantRolePrompt.replace('$messages', JSON.stringify(messages)))
     try {
       const completion = await this.openai.chat.completions.create({
         messages: [{
@@ -112,5 +112,55 @@ export class PersonaGenerator {
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
+  }
+
+  async assistantQueryStream({
+    content,
+    messages,
+  }: {
+    content: string;
+    messages: string;
+  }) {
+    console.log('[debug]', systemAssistantRolePrompt.replace('$messages', JSON.stringify(messages)))
+    
+    const stream = await this.openai.chat.completions.create({
+      messages: [{
+        role: "system",
+        content: systemAssistantRolePrompt.replace('$messages', messages),
+      }, {
+        role: 'user',
+        content,    
+      }],
+      model: this.model,
+      stream: true,
+    });
+
+    return stream;
+  }
+
+  async generateCharacterfileStream({
+    content,
+  }: {
+    content: string;
+  }) {
+    const parsedContent = contentSchema.safeParse(content);
+    
+    if (!parsedContent.success) {
+      throw new Error(parsedContent.error.message);
+    }
+
+    const stream = await this.openai.chat.completions.create({
+      messages: [{
+        role: "system",
+        content: systemRolePrompt,
+      }, {
+        role: 'user',
+        content,    
+      }],
+      model: this.model,
+      stream: true,
+    });
+
+    return stream;
   }
 }
