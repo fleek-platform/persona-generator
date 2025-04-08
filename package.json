@@ -1,58 +1,10 @@
 {
-  "name": "@fleek-platform/persona-generator",
-  "version": "0.0.0",
-  "description": "The persona-generator is a library designed to transform user input into structured JSON files representing AI agent personas. It converts user friendly descriptions into detailed character profiles",
-  "repository": "https://github.com/fleek-platform/persona-generator",
-  "homepage": "https://github.com/fleek-platform/persona-generator",
-  "bin": {
-    "persona-generator": "cli"
-  },
-  "keywords": [],
-  "license": "MIT",
-  "type": "module",
-  "files": [
-    "dist",
-    "README.md",
-    "CHANGELOG.md"
-  ],
-  "main": "./dist/index.js",
-  "exports": {
-    ".": "./dist/index.js",
-    "./PersonaGenerator": "./dist/index.js"
-  },
-  "scripts": {
-    "build": "pnpm exec bun build.ts",
-    "changeset:add": "pnpm exec changeset",
-    "changeset:status": "pnpm exec changeset status",
-    "changeset:version": "pnpm exec changeset version",
-    "clean": "pnpm \"/^clean:.*/\"",
-    "clean:dist": "rm -rf dist",
-    "clean:node": "rm -rf node_modules",
-    "lambda:preview": "pnpm build && LAMBDA_RUNNER_MODE=\"dist\" sls dev",
-    "lambda:deploy": "pnpm build && LAMBDA_RUNNER_MODE=\"dist\" sls deploy",
-    "format": "pnpm exec biome format --write ./src",
-    "format:check": "pnpm exec biome format ./src",
-    "preview": "pnpm exec bun --watch ./preview"
-  },
-  "dependencies": {
-    "@changesets/cli": "^2.28.1",
-    "@types/bun": "^1.2.5",
-    "abort-controller": "^3.0.0",
-    "biome": "^0.3.3",
-    "bun": "^1.2.7",
-    "hono": "^4.7.5",
-    "node-fetch": "^3.3.2",
-    "openai": "^4.90.0",
-    "serverless-domain-manager": "^8.0.0",
-    "typescript": "^5.8.2",
-    "zod": "^3.23.4"
-  },
-  "engines": {
-    "bun": ">=1.2.7",
-    "pnpm": ">=9",
-    "node": ">=20.18.0"
-  },
+  "name": "persona-generator-monorepo",
   "devDependencies": {
-    "serverless-vpc-plugin": "^1.0.6"
-  }
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "workspaces": ["packages/*"]
 }

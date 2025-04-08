@@ -3,8 +3,7 @@ import { cors } from 'hono/cors';
 import { stream } from 'hono/streaming';
 
 // import { getDefined } from '../../src/defined.js';
-import { parseResponseData } from '../../src/utils/json.js';
-import { PersonaGenerator } from '../../dist/index.js';
+import { parseResponseData, PersonaGenerator  } from '@fleek-platform/persona-generator';
 
 export const app = new Hono().basePath('/v1');
 
@@ -16,7 +15,11 @@ app.use('/*', cors({
   credentials: true,
 }));
 
-app.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
+app.get('/', (ctx) => ctx.text('/ I am here live. I am not a cat!'));
+
+app.get('/hello', (ctx) => ctx.text('/hello I am here live. I am not a cat!'));
+
+app.get('/health', (ctx) => ctx.text('/health I am here live. I am not a cat!'));
 
 const apiKey = 'AIzaSyCQmnO-CFZEp4hgN-D75ZCIV6PIs_TqVpY';
 const baseURL = 'https://generativelanguage.googleapis.com/v1beta/openai/';

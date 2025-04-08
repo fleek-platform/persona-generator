@@ -34,3 +34,6 @@ dist
 # serverless
 .serverless
 config.yml
+
+# SAM
+**/.aws-sam

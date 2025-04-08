@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 import { systemRolePrompt, systemAssistantRolePrompt } from '@base/prompts/index.js';
 
+export { parseResponseData } from './utils/json.ts';
+
 export type ExecResponse = Promise<z.infer<typeof ResponseSchema>>;
 
 export const ResponseSchema = z.object({
