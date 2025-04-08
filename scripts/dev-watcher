@@ -10,7 +10,7 @@ fi
 
 watchexec \
   -w packages/persona-generator/src \
-  -w packages/persona-generator-service/app \
+  -w packages/persona-generator-service/src \
   -e ts,json \
   -r \
   -- scripts/dev-local-api

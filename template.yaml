@@ -29,7 +29,7 @@ Resources:
         Target: "es2020"
         Sourcemap: true
         EntryPoints: 
-        - index.ts
+        - src/index.ts
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
