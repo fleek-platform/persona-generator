@@ -8,6 +8,11 @@
   },
   "workspaces": ["packages/*"],
   "scripts": {
-    "dev": "scripts/dev-watcher"
+    "dev": "scripts/dev-watcher",
+    "service:build": "sam build --build-in-source --parameter-overrides Environment=staging",
+    "service:deploy": "bun run service:build && ./scripts/dev-deploy"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }

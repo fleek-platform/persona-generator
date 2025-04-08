@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "🤖 Development deployment..."
+
+dotEnvFilename=".env"
+
+if [[ ! -f "$dotEnvFilename" ]]; then
+  echo "👹 Oops! A dotenv file ($dotEnvFilename) wasn't found."
+
+  exit 1
+fi
+
+source "$dotEnvFilename"
+
+sam deploy \
+  --parameter-overrides \
+    Environment=staging \
+    PrivateOpenAIApiKey="$PRIVATE_OPENAI_COMPATIBLE_API_KEY" \
+    PublicOpenAIApiUrl="$PUBLIC_OPENAI_COMPATIBLE_API_URL" \
+    PublicOpenAIModel="$PUBLIC_OPENAI_COMPATIBLE_MODEL" \
+  --capabilities CAPABILITY_IAM

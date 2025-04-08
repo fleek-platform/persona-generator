@@ -11,6 +11,8 @@ fi
 watchexec \
   -w packages/persona-generator/src \
   -w packages/persona-generator-service/src \
-  -e ts,json \
+  -w template.yaml \
+  -w samconfig.toml \
+  -e ts,json,yaml,toml \
   -r \
   -- scripts/dev-local-api

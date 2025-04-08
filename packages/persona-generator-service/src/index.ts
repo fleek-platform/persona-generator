@@ -1,4 +1,4 @@
 import { handle } from 'hono/aws-lambda';
-import { app } from './service';
+import { api } from './service';
 
-export const handler = handle(app);
+export const handler = handle(api);

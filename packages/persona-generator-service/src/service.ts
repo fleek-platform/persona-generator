@@ -1,13 +1,20 @@
+import 'dotenv/config';
+
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { stream } from 'hono/streaming';
 
-// import { getDefined } from '../../src/defined.js';
+import { getDefined } from './defined.js';
+// TODO: Export types
 import { parseResponseData, PersonaGenerator  } from '@fleek-platform/persona-generator';
 
-export const app = new Hono().basePath('/v1');
+const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
+const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
+const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
 
-app.use('/*', cors({
+export const api = new Hono().basePath('/v1');
+
+api.use('/*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'Priority'],
@@ -15,17 +22,9 @@ app.use('/*', cors({
   credentials: true,
 }));
 
-app.get('/', (ctx) => ctx.text('/ I am here live. I am not a cat!'));
+api.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
 
-app.get('/hello', (ctx) => ctx.text('/hello I am here live. I am not a cat!'));
-
-app.get('/health', (ctx) => ctx.text('/health I am here live. I am not a cat!'));
-
-const apiKey = 'AIzaSyCQmnO-CFZEp4hgN-D75ZCIV6PIs_TqVpY';
-const baseURL = 'https://generativelanguage.googleapis.com/v1beta/openai/';
-const model = 'gemini-2.0-flash';
-
-app.post('/assistant', async (ctx) => {
+api.post('/assistant', async (ctx) => {
   const { content, messages } = await ctx.req.json();
   if (typeof content !== 'string' || !content) {
     return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
@@ -46,7 +45,7 @@ app.post('/assistant', async (ctx) => {
   return ctx.json({ status: 'success', data });
 });
 
-app.post('/generate', async (ctx) => {
+api.post('/generate', async (ctx) => {
   console.log('Generate endpoint called');
   const { content } = await ctx.req.json();
   console.log('Request content:', content);
@@ -68,7 +67,7 @@ app.post('/generate', async (ctx) => {
   return ctx.json({ status: 'success', data: parseResponseData(data), apiKey, baseURL, model });
 });
 
-app.post('/assistant/stream', async (ctx) => {
+api.post('/assistant/stream', async (ctx) => {
   const { content, messages } = await ctx.req.json();
   if (typeof content !== 'string' || !content) {
     return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
@@ -102,7 +101,7 @@ app.post('/assistant/stream', async (ctx) => {
   });
 });
 
-app.post('/generate/stream', async (ctx) => {
+api.post('/generate/stream', async (ctx) => {
   console.log('Generate stream endpoint called');
   const { content } = await ctx.req.json();
   console.log('Request content:', content);
@@ -135,7 +134,7 @@ app.post('/generate/stream', async (ctx) => {
   });
 });
 
-app.get('/test-connection', async (ctx) => {
+api.get('/test-connection', async (ctx) => {
   try {
     console.log('Testing connection to Google API');
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models');

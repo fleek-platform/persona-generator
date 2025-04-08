@@ -28,3 +28,13 @@ warm_containers = "EAGER"
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
+
+[staging.deploy.parameters]
+stack_name = "persona-generator-service"
+resolve_s3 = true
+s3_prefix = "persona-generator-service"
+region = "eu-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+parameter_overrides = "Environment=\"staging\""

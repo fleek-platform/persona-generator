@@ -3,12 +3,48 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   persona-generator-service
   
+Parameters:
+  Environment:
+    Type: String
+    Default: staging
+    AllowedValues:
+      - staging
+      - prod
+    Description: The deployment environment
+  PrivateOpenAIApiKey:
+    Type: String
+    NoEcho: true
+    Description: OpenAI API Key
+  
+  PublicOpenAIApiUrl:
+    Type: String
+    Description: OpenAI API URL
+  
+  PublicOpenAIModel:
+    Type: String
+    Description: OpenAI Model to use
+
+Mappings:
+  EnvironmentToStageMapping:
+    staging:
+      StageName: Stg
+    prod:
+      StageName: Prod
+
 Globals:
   Function:
     Timeout: 3
+    Environment:
+      Variables:
+        ENVIRONMENT: !Ref Environment
 
 Resources:
-  HelloWorldFunction:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
+  
+  PersonaGeneratorService:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: packages/persona-generator-service/
@@ -16,12 +52,18 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Environment:
+        Variables:
+          PRIVATE_OPENAI_COMPATIBLE_API_KEY: !Ref PrivateOpenAIApiKey
+          PUBLIC_OPENAI_COMPATIBLE_API_URL: !Ref PublicOpenAIApiUrl
+          PUBLIC_OPENAI_COMPATIBLE_MODEL: !Ref PublicOpenAIModel
       Events:
         CatchAll:
           Type: Api
           Properties:
             Path: /{proxy+}
             Method: ANY
+            RestApiId: !Ref ApiGatewayApi
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -30,3 +72,13 @@ Resources:
         Sourcemap: true
         EntryPoints: 
         - src/index.ts
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub 
+      - "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
+      - StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
+  Environment:
+    Description: "Current deployment environment"
+    Value: !Ref Environment
