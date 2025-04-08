@@ -14,15 +14,19 @@ Parameters:
   PrivateOpenAIApiKey:
     Type: String
     NoEcho: true
-    Description: OpenAI API Key
-  
+    Description: OpenAI API Key  
   PublicOpenAIApiUrl:
     Type: String
     Description: OpenAI API URL
-  
   PublicOpenAIModel:
     Type: String
     Description: OpenAI Model to use
+  DomainName:
+    Type: String
+    Description: Custom domain name for the API
+  CertificateArn:
+    Type: String
+    Description: ARN of the existing ACM certificate for the domain
 
 Mappings:
   EnvironmentToStageMapping:
@@ -39,10 +43,32 @@ Globals:
         ENVIRONMENT: !Ref Environment
 
 Resources:
+  # API Gateway without domain configuration in the API resource
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
+  
+  # Separate domain name configuration
+  ApiGatewayDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !Ref DomainName
+      RegionalCertificateArn: !Ref CertificateArn
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+  
+  # Base path mapping to connect the custom domain to the API
+  ApiGatewayBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref DomainName
+      RestApiId: !Ref ApiGatewayApi
+      Stage: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
+    DependsOn:
+      - ApiGatewayDomainName
+      - ApiGatewayApi
   
   PersonaGeneratorService:
     Type: AWS::Serverless::Function
@@ -68,10 +94,10 @@ Resources:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
-        Target: "es2020"
+        Target: es2020
         Sourcemap: true
         EntryPoints: 
-        - src/index.ts
+          - src/index.ts
 
 Outputs:
   ApiEndpoint:
@@ -79,6 +105,12 @@ Outputs:
     Value: !Sub 
       - "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
       - StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
+  CustomDomainEndpoint:
+    Description: "Custom domain endpoint URL"
+    Value: !Sub "https://${DomainName}/"
+  DistributionDomainName:
+    Description: "Distribution domain name (for DNS CNAME record)"
+    Value: !GetAtt ApiGatewayDomainName.RegionalDomainName
   Environment:
     Description: "Current deployment environment"
     Value: !Ref Environment
