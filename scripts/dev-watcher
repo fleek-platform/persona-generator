@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo "🤖 Development server starting..."
+
+if ! command -v watchexec >/dev/null 2>&1; then
+  echo "👹 Oops! The watchexec CLI is required. You must install it. Learn more by visiting https://github.com/watchexec/watchexec"
+
+  exit 1
+fi
+
+watchexec \
+  -w packages/persona-generator/src \
+  -w packages/persona-generator-service/app \
+  -e ts,json \
+  -r \
+  -- scripts/dev-local-api

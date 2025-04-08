@@ -1,6 +1,6 @@
 {
   "name": "@fleek-platform/persona-generator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "The persona-generator is a library designed to transform user input into structured JSON files representing AI agent personas. It converts user friendly descriptions into detailed character profiles",
   "bin": {
     "persona-generator": "cli"

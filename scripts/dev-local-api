@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "🤖 Development local API..."
+
+if ! command -v sam >/dev/null 2>&1; then
+  echo "👹 Oops! The aws SAM CLI is required. You must install it. Learn more by visiting https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html"
+
+  exit 1
+fi
+
+sam build --build-in-source && sam local start-api
