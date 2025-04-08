@@ -9,7 +9,7 @@ Parameters:
     Default: staging
     AllowedValues:
       - staging
-      - prod
+      - production
     Description: The deployment environment
   PrivateOpenAIApiKey:
     Type: String
@@ -32,7 +32,7 @@ Mappings:
   EnvironmentToStageMapping:
     staging:
       StageName: Stg
-    prod:
+    production:
       StageName: Prod
 
 Globals:
@@ -43,13 +43,11 @@ Globals:
         ENVIRONMENT: !Ref Environment
 
 Resources:
-  # API Gateway without domain configuration in the API resource
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
       StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
   
-  # Separate domain name configuration
   ApiGatewayDomainName:
     Type: AWS::ApiGateway::DomainName
     Properties:
@@ -58,8 +56,9 @@ Resources:
       EndpointConfiguration:
         Types:
           - REGIONAL
-  
-  # Base path mapping to connect the custom domain to the API
+    DependsOn:
+      - ApiGatewayApi
+
   ApiGatewayBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
     Properties:
