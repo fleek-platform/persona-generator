@@ -35,9 +35,8 @@ echo "{
   }
 }" > "$envJsonFilename"
 
-
 (
-  echo "🤖 Rebuild $pkgPersonaGenerator"
+  echo "🤖 Rebuild $pkgPersonaGenerator..."
 
   cd "$pkgPersonaGenerator"
 
