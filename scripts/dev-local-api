@@ -3,6 +3,7 @@
 envJsonFilename="env.json"
 dotenv=".env"
 lambdaFunctionName="PersonaGeneratorService"
+pkgPersonaGenerator="packages/persona-generator"
 
 echo "🤖 Development local API..."
 
@@ -33,6 +34,15 @@ echo "{
     \"PUBLIC_OPENAI_COMPATIBLE_MODEL\": \"$PUBLIC_OPENAI_COMPATIBLE_MODEL\"
   }
 }" > "$envJsonFilename"
+
+
+(
+  echo "🤖 Rebuild $pkgPersonaGenerator"
+
+  cd "$pkgPersonaGenerator"
+
+  bun run build
+)
 
 sam build --build-in-source
 sam local start-api --debug --env-vars "$envJsonFilename"
