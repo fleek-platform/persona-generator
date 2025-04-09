@@ -101,16 +101,16 @@ Resources:
   WAFWebACL:
     Type: AWS::WAFv2::WebACL
     Properties:
-      Name: "PersonaGeneratorServiceRateLimit"
+      Name: !Sub "PersonaGeneratorServiceRateLimit-${Environment}"
       Scope: REGIONAL
       DefaultAction:
         Allow: {}
       VisibilityConfig:
         SampledRequestsEnabled: true
         CloudWatchMetricsEnabled: true
-        MetricName: "PersonaGeneratorServiceRateLimit"
+        MetricName: !Sub "PersonaGeneratorServiceRateLimit-${Environment}"
       Rules:
-        - Name: "PersonaGeneratorServiceRateLimitRule"
+        - Name: !Sub "PersonaGeneratorServiceRateLimitRule-${Environment}"
           Priority: 1
           Action:
             Block: {}
@@ -121,7 +121,7 @@ Resources:
           VisibilityConfig:
             SampledRequestsEnabled: true
             CloudWatchMetricsEnabled: true
-            MetricName: "PersonaGeneratorServiceRateLimitRule"
+            MetricName: !Sub "PersonaGeneratorServiceRateLimitRule-${Environment}"
 
   WAFWebACLAssociation:
     Type: AWS::WAFv2::WebACLAssociation
