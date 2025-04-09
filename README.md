@@ -16,7 +16,6 @@ You'll find the project located in [packages/persona-generator](./packages/perso
 - [⚕ Lambda](#lambda)
   - [Details](#details)
   - [Commands](#commands)
-  - [Distribution](#distribution)
   - [Service Preview](#service-preview)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
@@ -24,26 +23,19 @@ You'll find the project located in [packages/persona-generator](./packages/perso
   - [Branching strategy](#branching-strategy)
   - [Conventional commits](#conventional-commits)
 
-## 🤖 Install
-
-Install the package by executing:
-
-```sh
-npm i @fleek-platform/persona-generator
-```
-
-⚠️ If you're planning to contribute as a developer, you must install [pnpm](https://pnpm.io), otherwise most commands will fail.
+> [!NOTE]  
+> If you're planning to contribute as a developer, you must install [bun](https://github.com/oven-sh/bun), otherwise most commands will fail.
 
 ## 👷 Development
 
 For developers looking to contribute to the `@fleek-platform/persona-generator`, [clone](https://github.com/fleek-platform/persona-generator) the repository and follow the [contribution guide](#-contributing).
 
-For runtime we utilize [https://bun.sh](https://bun.sh) and [PNPM](https://pnpm.io/installation) as the package manager.
+For runtime we utilize [https://bun.sh](https://bun.sh) and as the package manager.
 
 Next, install the project dependencies:
 
 ```sh
-pnpm i
+bun i
 ```
 
 ### Environment variables
@@ -53,37 +45,31 @@ If you'll be interacting with services, you'll need to set up the environment va
 Create a local file named `.env` and declare the following environment variables for the environment you're interested (below we're using the public~production settings):
 
 ```sh
-PRIVATE_OPENAI_COMPATIBLE_API_KEY=***
 PUBLIC_OPENAI_COMPATIBLE_API_URL=***
 PUBLIC_OPENAI_COMPATIBLE_MODEL=***
 PUBLIC_FLEEK_REST_API_URL="https://api.fleek.xyz"
-NODE_ENV="production"
-LAMBDA_RUNNER_MODE="dev"
+PUBLIC_PERSONA_GENERATOR_ENVIRONMENT=***
+PUBLIC_PERSONA_GENERATOR_CUSTOM_DOMAIN_NAME=***
+PUBLIC_PERSONA_GENERATOR_CERTIFICATE_ARN=***
+PRIVATE_OPENAI_COMPATIBLE_API_KEY=***
 ```
 
 The application uses the [getDefined](./src/defined.ts) to lookup for environment variables.
 
-> [!IMPORTANT]
-> The app to run in lambda has to be prebuilt. You must set LAMBDA_RUNNER_MODE = "dist" for distribution, e.g. deploying the lambda. For development, the [preview server](#preview-server) allows you to make rapid local changes.
-
-### Preview server
+### Dev server
 
 A preview server's available for development purposes. It restarts everytime a project file's modified.
 
 > [!WARNING]  
 > The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment. If you'd like to test lambda's locally, learm more about it in [Lambda](#lambda) section.
 
-To start the preview server run:
+To start the dev server run:
 
 ```sh
-pnpm preview
+bun run dev
 ```
 
 You'll find information about the local server in the output.
-
-```sh
-🐰 Preview server running at http://localhost:3030
-```
 
 Use your favourite client to make requests, e.g. cURL:
 
@@ -94,13 +80,13 @@ curl \
   -d '{
     "content": "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
   }' \
-  http://localhost:3030/generate
+  http://127.0.0.1:3000/v1/generate
 ```
 
 An example using fetch:
 
 ```ts
-fetch('http://localhost:3030/generate', {
+fetch('http://localhost:3030/v1/generate', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -298,10 +284,6 @@ Get service details:
 ```sh
 bun run service:info
 ```
-
-### Distribution
-
-The app to run in lambda has to be prebuilt. You must set LAMBDA_RUNNER_MODE = "dist" for distribution, e.g. deploying the lambda. For development, the [preview server](#preview-server) allows you to make rapid local changes.
 
 ### Service Preview
 
