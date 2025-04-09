@@ -12,7 +12,8 @@
     "service:build": "sam build --build-in-source --parameter-overrides Environment=staging",
     "service:deploy": "bun run service:build && ./scripts/dev-deploy",
     "service:logs": "sam logs --stack-name persona-generator-service --name PersonaGeneratorService --tail",
-    "service:validate": "sam validate"
+    "service:validate": "sam validate",
+    "service:info": "sam list resources"
   },
   "dependencies": {
     "dotenv": "^16.4.7"

@@ -5,6 +5,8 @@
 
 The persona-generator is a library designed to transform user input (natural language processing) into structured JSON files representing AI agent personas. It converts user friendly descriptions into detailed character profiles, including secrets, biographical information, lore, and knowledge topics, an utility for building AI-driven apps.
 
+You'll find the project located in [packages/persona-generator](./packages/personage-generator), alongside there's the service built as lambda [packages/persona-generator-service](packages/persona-generator-service).
+
 ## Overview
 
 - [🤖 Install](#-install)
@@ -12,11 +14,10 @@ The persona-generator is a library designed to transform user input (natural lan
   - [Environment variables](#environment-variables)
   - [Preview](#preview-server)
 - [⚕ Lambda](#lambda)
-  - [Config](#config)
   - [Details](#details)
   - [Commands](#commands)
   - [Distribution](#distribution)
-  - [Lambda Preview](#lambda-preview)
+  - [Service Preview](#service-preview)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
 - [🙏 Contributing](#-contributing)
@@ -222,9 +223,14 @@ trotting, relying on the internet to stay updated on crime."
 
 ## Lambda
 
-The application's serviced by AWS Lambda leveraging a serverless setup. Our lambda's handler based in [Hono](https://hono.dev).
+The application's serviced by AWS Lambda leveraging a serverless setup. Our lambda's handler based in [Hono](https://hono.dev). Our project setup's based on [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html).
 
-Find the [serverless.yml](./serverless.yml) in the root directory. It requires an environment specific configuration details in a config.yml file (relevant to ops).
+Find the [template.yaml](./template.yaml) in the root directory. Also, the [samconfig.toml](samconfig.toml).
+
+> [!IMPORTANT]  
+> When customising DNS remember to flush your local DNS cache, e.g. macOS:
+> sudo dscacheutil -flushcache 
+> sudo killall -HUP mDNSResponder
 
 To operate locally, you must have aws configured. For example, its common to have previously configured it by:
 
@@ -251,31 +257,6 @@ region = <REGION>
 output = json
 ```
 
-### Config
-
-For operations (devOps), you must setup the `config.yml` in the root:
-
-```yaml
-customDomain:
-  certificateArn: arn:aws:acm:<REGION>:<AWS-ACCOUNT-ID>:certificate/<AWS-CERTIFICATE-MANAGER-ACM-ARN>
-  domainName: <CUSTOM-DOMAIN-NAME>
-
-provider:
-  runtime: nodejs20.x
-  region: <REGION>
-  stage: <ENVIRONMENT>
-```
-
-You can find the certificate ACM ARN in **https://<REGION>.console.aws.amazon.com/acm/home?region=<REGION>#/certificates/list
-**.
-
-When customising DNS remember to flush your local DNS cache, e.g. macOS:
-
-```sh
-sudo dscacheutil -flushcache
-sudo killall -HUP mDNSResponder
-```
-
 ### Details
 
 The application routes computes requests allowed by our [serverless](./serverless.yml) setup. You may find that a wildcard's declared to allow any income or method request. Otherwise, specificity's required to allow it to reach into the app to resolve it. Thus, if you find in a situation which you can't ping an endpoint it might be that wildcards' disabled, requiring to expose the route in the serverless settings.
@@ -294,7 +275,7 @@ curl -X GET \
   https://02xuym9fgk.execute-api.eu-west-2.amazonaws.com/prod/health
 ```
 
-For any other routes, read the [lambda/index](./lambda/index.ts).
+For any other routes, read the [packages/persona-generator-service/src/service.ts](./packages/persona-generator-service/src/service.ts).
 
 ### Commands
 
@@ -303,34 +284,34 @@ The following commands require you to have an AWS account with permissions to in
 Dev Mode redirects live AWS Lambda events to local:
 
 ```sh
-sls dev
+bun run dev
 ```
 
-Deploy the service as a lambda:
+Deploy the lambda service:
 
 ```sh
-sls deploy
+bun run service:deploy
 ```
 
 Get service details:
 
-```
-sls info --verbose
+```sh
+bun run service:info
 ```
 
 ### Distribution
 
 The app to run in lambda has to be prebuilt. You must set LAMBDA_RUNNER_MODE = "dist" for distribution, e.g. deploying the lambda. For development, the [preview server](#preview-server) allows you to make rapid local changes.
 
-### Lambda Preview
+### Service Preview
 
-The lambda previewer provides the mechnanism to start the dev mode of what AWS provides as a service. It's a bit different from [preview server](#preview-server), as it tries to simulate AWS lambda locally and hydrate onto the cloud only when requested.
+The service previewer provides the mechnanism to start the dev mode of what AWS provides as a service.
 
 > [!WARNING]  
 > To operate locally, you must have aws configured.
 
 > [!WARNING]  
-> The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment. If you'd like to test lambda's locally, learm more about it in [Lambda](#lambda) section.
+> The public API's provided as a lambda. Local environment preview might not reflect the actual behaviour of lambda, which you must test to avoid disappointment.
 
 > [!WARNING]
 > Find a solution to replace node-fetch of openai
@@ -340,7 +321,7 @@ which cause need to prebuild running lambda, e.g. sls dev
 Start the lambda preview locally by:
 
 ```sh
-pnpm lambda:preview
+pnpm service:preview
 ```
 
 ## Changeset
