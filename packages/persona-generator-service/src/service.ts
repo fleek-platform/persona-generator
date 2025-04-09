@@ -2,9 +2,10 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { stream } from 'hono/streaming';
 
-import { getDefined } from './defined.js';
-// TODO: Export types
+// TODO: Export build types
 import { parseResponseData, PersonaGenerator  } from '@fleek-platform/persona-generator';
+
+import { getDefined } from './defined.js';
 
 const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
 const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
