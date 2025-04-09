@@ -85,7 +85,6 @@ export class PersonaGenerator {
     content: string;
     messages: string;
   }): ExecResponse {
-    console.log('[debug]', systemAssistantRolePrompt.replace('$messages', JSON.stringify(messages)))
     try {
       const completion = await this.openai.chat.completions.create({
         messages: [{
@@ -98,8 +97,6 @@ export class PersonaGenerator {
         model: this.model,
       });
 
-      console.log(completion.choices)
-
       const data = completion.choices[0].message.content || '';
 
       return {
@@ -108,7 +105,6 @@ export class PersonaGenerator {
         error: '',
       };
     } catch (error) {
-      console.log('error?', error)
       return {
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -122,9 +118,7 @@ export class PersonaGenerator {
   }: {
     content: string;
     messages: string;
-  }) {
-    console.log('[debug]', systemAssistantRolePrompt.replace('$messages', JSON.stringify(messages)))
-    
+  }) {    
     const stream = await this.openai.chat.completions.create({
       messages: [{
         role: "system",

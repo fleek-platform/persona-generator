@@ -37,7 +37,7 @@ Mappings:
 
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
     Environment:
       Variables:
         ENVIRONMENT: !Ref Environment

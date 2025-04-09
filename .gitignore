@@ -23,6 +23,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+**/env.json
 
 #build
 dist
@@ -37,3 +38,6 @@ config.yml
 
 # SAM
 **/.aws-sam
+
+# Tests
+**/test

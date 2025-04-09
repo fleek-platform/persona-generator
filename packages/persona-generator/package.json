@@ -39,7 +39,7 @@
     "bun": "^1.2.7",
     "hono": "^4.7.5",
     "node-fetch": "^3.3.2",
-    "openai": "^4.90.0",
+    "openai": "4.90.0",
     "serverless-domain-manager": "^8.0.0",
     "typescript": "^5.8.2",
     "zod": "^3.23.4"
