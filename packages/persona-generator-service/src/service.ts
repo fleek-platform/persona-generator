@@ -13,6 +13,7 @@ const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
 
 export const api = new Hono().basePath('/v1');
 
+// TODO: Set allowed origin list
 api.use('/*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -45,9 +46,7 @@ api.post('/assistant', async (ctx) => {
 });
 
 api.post('/generate', async (ctx) => {
-  console.log('Generate endpoint called');
   const { content } = await ctx.req.json();
-  console.log('Request content:', content);
   
   const personaGenerator = new PersonaGenerator({
     apiKey,
@@ -55,9 +54,7 @@ api.post('/generate', async (ctx) => {
     model,
   });
 
-  console.log('Making request to PersonaGenerator');
   const { data, error, status } = await personaGenerator.generateCharacterfile({ content });
-  console.log('Response:', { data, error, status });
 
   if (!data || error || status !== 'success') {
     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
@@ -91,8 +88,6 @@ api.post('/assistant/stream', async (ctx) => {
           await streamWriter.write(content);
         }
       }
-      
-      console.log('Full streamed response:', fullText);
     } catch (error) {
       console.error('Streaming error:', error);
       await streamWriter.write(`Error: ${error.message}`);
@@ -101,9 +96,7 @@ api.post('/assistant/stream', async (ctx) => {
 });
 
 api.post('/generate/stream', async (ctx) => {
-  console.log('Generate stream endpoint called');
   const { content } = await ctx.req.json();
-  console.log('Request content:', content);
   
   const personaGenerator = new PersonaGenerator({
     apiKey,
@@ -131,17 +124,4 @@ api.post('/generate/stream', async (ctx) => {
       await streamWriter.write(`Error: ${error.message}`);
     }
   });
-});
-
-api.get('/test-connection', async (ctx) => {
-  try {
-    console.log('Testing connection to Google API');
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models');
-    const status = response.status;
-    console.log('Connection test result:', status);
-    return ctx.json({ status: 'success', connectionStatus: status });
-  } catch (error) {
-    console.error('Connection test error:', error);
-    return ctx.json({ status: 'error', error: error.message });
-  }
 });
