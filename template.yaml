@@ -98,6 +98,40 @@ Resources:
         EntryPoints: 
           - src/index.ts
 
+  WAFWebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: "PersonaGeneratorServiceRateLimit"
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: "PersonaGeneratorServiceRateLimit"
+      Rules:
+        - Name: "PersonaGeneratorServiceRateLimitRule"
+          Priority: 1
+          Action:
+            Block: {}
+          Statement:
+            RateBasedStatement:
+              Limit: 600
+              AggregateKeyType: IP
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: "PersonaGeneratorServiceRateLimitRule"
+
+  WAFWebACLAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: 
+        !Sub 
+          - "arn:aws:apigateway:${AWS::Region}::/restapis/${ApiGatewayApi}/stages/${StageName}"
+          - StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
+      WebACLArn: !GetAtt WAFWebACL.Arn
+
 Outputs:
   ApiEndpoint:
     Description: "API Gateway endpoint URL"
