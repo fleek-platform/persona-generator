@@ -27,13 +27,7 @@ if [[ -z "$PRIVATE_OPENAI_COMPATIBLE_API_KEY" || -z "$PUBLIC_OPENAI_COMPATIBLE_A
   exit 1
 fi
 
-echo "{
-  \"$lambdaFunctionName\": {
-    \"PRIVATE_OPENAI_COMPATIBLE_API_KEY\": \"$PRIVATE_OPENAI_COMPATIBLE_API_KEY\",
-    \"PUBLIC_OPENAI_COMPATIBLE_API_URL\": \"$PUBLIC_OPENAI_COMPATIBLE_API_URL\",
-    \"PUBLIC_OPENAI_COMPATIBLE_MODEL\": \"$PUBLIC_OPENAI_COMPATIBLE_MODEL\"
-  }
-}" > "$envJsonFilename"
+./scripts/dev-build-env-json
 
 (
   echo "🤖 Rebuild $pkgPersonaGenerator..."
@@ -44,4 +38,4 @@ echo "{
 )
 
 sam build --build-in-source
-sam local start-api --debug --env-vars "$envJsonFilename"
+sam local start-api --env-vars "$envJsonFilename"

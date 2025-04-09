@@ -1,0 +1,32 @@
+#!/bin/bash
+
+envJsonFilename="env.json"
+dotenv=".env"
+lambdaFunctionName="PersonaGeneratorService"
+
+echo "🤖 Development build $envJsonFilename..."
+
+if [[ ! -f "$dotenv" ]]; then
+  echo "👹 Oops! Missing the dotenv file. Check the README, please!"
+
+  exit 1
+fi
+
+source "$dotenv"
+
+if [[ -z "$PRIVATE_OPENAI_COMPATIBLE_API_KEY" || -z "$PUBLIC_OPENAI_COMPATIBLE_API_URL" || -z "$PUBLIC_OPENAI_COMPATIBLE_MODEL" ]]; then
+  echo "👹 Oops! You seem to have failed to provide the required environment variables? Check the README, please!"
+
+  exit 1
+fi
+
+echo "{
+  \"$lambdaFunctionName\": {
+    \"PRIVATE_OPENAI_COMPATIBLE_API_KEY\": \"$PRIVATE_OPENAI_COMPATIBLE_API_KEY\",
+    \"PUBLIC_OPENAI_COMPATIBLE_API_URL\": \"$PUBLIC_OPENAI_COMPATIBLE_API_URL\",
+    \"PUBLIC_OPENAI_COMPATIBLE_MODEL\": \"$PUBLIC_OPENAI_COMPATIBLE_MODEL\"
+  }
+}" > "$envJsonFilename"
+
+echo "💡 Generated $envJsonFilename:"
+cat "$envJsonFilename"
