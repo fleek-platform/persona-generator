@@ -12,7 +12,19 @@ fi
 
 source "$dotEnvFilename"
 
+if [[ "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "staging" ]]; then
+  STACK_NAME="persona-generator-service-staging"
+elif [[ "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "production" ]]; then
+  STACK_NAME="persona-generator-service"
+else
+  echo "👹 Oops! Unknown environment PUBLIC_PERSONA_GENERATOR_ENVIRONMENT = $PUBLIC_PERSONA_GENERATOR_ENVIRONMENT"
+
+  exit 1
+fi
+
+
 sam deploy \
+  --stack-name "$STACK_NAME" \
   --parameter-overrides \
     Environment="$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" \
     CertificateArn="$PUBLIC_PERSONA_GENERATOR_CERTIFICATE_ARN" \

@@ -3,9 +3,9 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "persona-generator-service"
+stack_name = "persona-generator-service-staging"
 resolve_s3 = true
-s3_prefix = "persona-generator-service"
+s3_prefix = "persona-generator-service-staging"
 region = "eu-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
@@ -34,3 +34,17 @@ warm_containers = "EAGER"
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
+
+[staging.deploy.parameters]
+stack_name = "persona-generator-staging"
+s3_bucket = "persona-generator-staging-bucket"
+s3_prefix = "persona-generator/staging"
+region = "eu-west-2"
+capabilities = "CAPABILITY_IAM"
+
+[production.deploy.parameters]
+stack_name = "persona-generator-production"
+s3_bucket = "persona-generator-production-bucket"
+s3_prefix = "persona-generator/production"
+region = "eu-west-2"
+capabilities = "CAPABILITY_IAM"
