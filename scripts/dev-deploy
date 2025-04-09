@@ -12,10 +12,8 @@ fi
 
 source "$dotEnvFilename"
 
-if [[ "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "staging" ]]; then
-  STACK_NAME="persona-generator-service-staging"
-elif [[ "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "production" ]]; then
-  STACK_NAME="persona-generator-service"
+if [[ "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "staging" || "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "production" ]]; then
+  STACK_NAME="persona-generator-service-$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT"
 else
   echo "👹 Oops! Unknown environment PUBLIC_PERSONA_GENERATOR_ENVIRONMENT = $PUBLIC_PERSONA_GENERATOR_ENVIRONMENT"
 
