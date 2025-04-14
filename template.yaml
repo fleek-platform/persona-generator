@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Hono Streaming API with Lambda Function URL (Built-in esbuild)
+Description: Hono Streaming API with Lambda Function URL and CloudFront Distribution
 
 Parameters:
   Environment:
@@ -15,6 +15,12 @@ Parameters:
   PublicOpenAIModel:
     Type: String
     Description: The public OpenAI model
+  DomainName:
+    Type: String
+    Description: The custom domain name (e.g., api.example.com)
+  CertificateArn:
+    Type: String
+    Description: The ARN of the ACM certificate for the custom domain
 
 Globals:
   Function:
@@ -29,7 +35,6 @@ Resources:
       Handler: index.handler
       CodeUri: packages/persona-generator-service/
       PackageType: Zip
-      Events: {}
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
@@ -47,7 +52,65 @@ Resources:
         EntryPoints:
           - src/index.ts
 
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Aliases:
+          - !Ref DomainName
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+        Origins:
+          - Id: PersonaGeneratorServiceOrigin
+            DomainName: !Select [2, !Split ["/", !GetAtt PersonaGeneratorServiceUrl.FunctionUrl]]
+            CustomOriginConfig:
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+        DefaultCacheBehavior:
+          TargetOriginId: PersonaGeneratorServiceOrigin
+          ForwardedValues:
+            QueryString: true
+            Headers:
+              - Accept
+              - Authorization
+              - Content-Type
+              - Origin
+              - Referer
+            Cookies:
+              Forward: all
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT
+            - POST
+            - PATCH
+            - DELETE
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+
 Outputs:
   PersonaGeneratorServiceUrl:
     Description: "URL for the PersonaGeneratorService Lambda"
     Value: !GetAtt PersonaGeneratorServiceUrl.FunctionUrl
+  
+  CloudFrontDomainName:
+    Description: "CloudFront Domain Name"
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    
+  CustomDomainName:
+    Description: "Custom Domain Name (requires DNS setup)"
+    Value: !Ref DomainName
+    
+  CloudFrontDistributionId:
+    Description: "CloudFront Distribution ID"
+    Value: !Ref CloudFrontDistribution
+    
+  CloudFrontDistributionConsoleUrl:
+    Description: "Console URL for the CloudFront Distribution"
+    Value: !Sub https://console.aws.amazon.com/cloudfront/home?region=${AWS::Region}#distribution-settings:${CloudFrontDistribution}
