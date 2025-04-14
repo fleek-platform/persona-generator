@@ -34,7 +34,7 @@ const CHARACTER_FILE_SCHEMA_TEXT = `{
     ${strictlyMatchTermList(PLUGIN_NAMES)},
   ],
   bio: [
-    ${mandatoryBasedOnUserDescription('biography', 30, 'personality')},
+    ${mandatoryBasedOnUserDescription('biography', 15, 'personality')},
   ],
   lore: [
     ${fixedNumberExamplesOf(4, 8, 'explain its purpose')},
