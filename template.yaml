@@ -1,149 +1,53 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  persona-generator-service
-  
+Description: Hono Streaming API with Lambda Function URL (Built-in esbuild)
+
 Parameters:
   Environment:
     Type: String
-    Default: staging
-    AllowedValues:
-      - staging
-      - production
-    Description: The deployment environment
+    Description: The deployment environment (staging or production)
   PrivateOpenAIApiKey:
     Type: String
-    NoEcho: true
-    Description: OpenAI API Key  
+    Description: The private OpenAI API key
   PublicOpenAIApiUrl:
     Type: String
-    Description: OpenAI API URL
+    Description: The public OpenAI API URL
   PublicOpenAIModel:
     Type: String
-    Description: OpenAI Model to use
-  DomainName:
-    Type: String
-    Description: Custom domain name for the API
-  CertificateArn:
-    Type: String
-    Description: ARN of the existing ACM certificate for the domain
-
-Mappings:
-  EnvironmentToStageMapping:
-    staging:
-      StageName: Stg
-    production:
-      StageName: Prod
+    Description: The public OpenAI model
 
 Globals:
   Function:
-    Timeout: 30
-    Environment:
-      Variables:
-        ENVIRONMENT: !Ref Environment
+    Runtime: nodejs20.x
+    Architectures: [arm64]
+    Timeout: 32
 
 Resources:
-  ApiGatewayApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
-  
-  ApiGatewayDomainName:
-    Type: AWS::ApiGateway::DomainName
-    Properties:
-      DomainName: !Ref DomainName
-      RegionalCertificateArn: !Ref CertificateArn
-      EndpointConfiguration:
-        Types:
-          - REGIONAL
-    DependsOn:
-      - ApiGatewayApi
-
-  ApiGatewayBasePathMapping:
-    Type: AWS::ApiGateway::BasePathMapping
-    Properties:
-      DomainName: !Ref DomainName
-      RestApiId: !Ref ApiGatewayApi
-      Stage: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
-    DependsOn:
-      - ApiGatewayDomainName
-      - ApiGatewayApi
-  
   PersonaGeneratorService:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: packages/persona-generator-service/
       Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
+      CodeUri: packages/persona-generator-service/
+      PackageType: Zip
+      Events: {}
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: RESPONSE_STREAM
       Environment:
         Variables:
           PRIVATE_OPENAI_COMPATIBLE_API_KEY: !Ref PrivateOpenAIApiKey
           PUBLIC_OPENAI_COMPATIBLE_API_URL: !Ref PublicOpenAIApiUrl
           PUBLIC_OPENAI_COMPATIBLE_MODEL: !Ref PublicOpenAIModel
-      Events:
-        CatchAll:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: ANY
-            RestApiId: !Ref ApiGatewayApi
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
         Target: es2020
         Sourcemap: true
-        EntryPoints: 
+        EntryPoints:
           - src/index.ts
 
-  WAFWebACL:
-    Type: AWS::WAFv2::WebACL
-    Properties:
-      Name: !Sub "PersonaGeneratorServiceRateLimit-${Environment}"
-      Scope: REGIONAL
-      DefaultAction:
-        Allow: {}
-      VisibilityConfig:
-        SampledRequestsEnabled: true
-        CloudWatchMetricsEnabled: true
-        MetricName: !Sub "PersonaGeneratorServiceRateLimit-${Environment}"
-      Rules:
-        - Name: !Sub "PersonaGeneratorServiceRateLimitRule-${Environment}"
-          Priority: 1
-          Action:
-            Block: {}
-          Statement:
-            RateBasedStatement:
-              Limit: 600
-              AggregateKeyType: IP
-          VisibilityConfig:
-            SampledRequestsEnabled: true
-            CloudWatchMetricsEnabled: true
-            MetricName: !Sub "PersonaGeneratorServiceRateLimitRule-${Environment}"
-
-  WAFWebACLAssociation:
-    Type: AWS::WAFv2::WebACLAssociation
-    Properties:
-      ResourceArn: 
-        !Sub 
-          - "arn:aws:apigateway:${AWS::Region}::/restapis/${ApiGatewayApi}/stages/${StageName}"
-          - StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
-      WebACLArn: !GetAtt WAFWebACL.Arn
-
 Outputs:
-  ApiEndpoint:
-    Description: "API Gateway endpoint URL"
-    Value: !Sub 
-      - "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/"
-      - StageName: !FindInMap [EnvironmentToStageMapping, !Ref Environment, StageName]
-  CustomDomainEndpoint:
-    Description: "Custom domain endpoint URL"
-    Value: !Sub "https://${DomainName}/"
-  DistributionDomainName:
-    Description: "Distribution domain name (for DNS CNAME record)"
-    Value: !GetAtt ApiGatewayDomainName.RegionalDomainName
-  Environment:
-    Description: "Current deployment environment"
-    Value: !Ref Environment
+  PersonaGeneratorServiceUrl:
+    Description: "URL for the PersonaGeneratorService Lambda"
+    Value: !GetAtt PersonaGeneratorServiceUrl.FunctionUrl

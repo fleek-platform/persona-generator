@@ -3,9 +3,9 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "persona-generator-service-staging"
+stack_name = "persona-generator-test-staging"
 resolve_s3 = true
-s3_prefix = "persona-generator-service-staging"
+s3_prefix = "persona-generator-test-staging"
 region = "eu-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"

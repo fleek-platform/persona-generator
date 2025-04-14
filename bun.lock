@@ -40,9 +40,10 @@
       "name": "@fleek-platform/persona-generator-service",
       "version": "0.0.0",
       "dependencies": {
-        "@fleek-platform/persona-generator": "workspace:*",
+        "@fleek-platform/persona-generator": "*",
         "esbuild": "^0.14.14",
         "hono": "^4.7.6",
+        "hono-rate-limiter": "^0.4.2",
       },
       "devDependencies": {
         "@types/aws-lambda": "^8.10.92",
@@ -683,6 +684,8 @@
     "hasown": ["hasown@2.0.2", "", { "dependencies": { "function-bind": "^1.1.2" } }, "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ=="],
 
     "hono": ["hono@4.7.6", "", {}, "sha512-564rVzELU+9BRqqx5k8sT2NFwGD3I3Vifdb6P7CmM6FiarOSY+fDC+6B+k9wcCb86ReoayteZP2ki0cRLN1jbw=="],
+
+    "hono-rate-limiter": ["hono-rate-limiter@0.4.2", "", { "peerDependencies": { "hono": "^4.1.1" } }, "sha512-AAtFqgADyrmbDijcRTT/HJfwqfvhalya2Zo+MgfdrMPas3zSMD8SU03cv+ZsYwRU1swv7zgVt0shwN059yzhjw=="],
 
     "http-proxy-agent": ["http-proxy-agent@7.0.2", "", { "dependencies": { "agent-base": "^7.1.0", "debug": "^4.3.4" } }, "sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig=="],
 

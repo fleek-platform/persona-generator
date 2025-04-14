@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { stream } from 'hono/streaming';
+import { stream, streamText } from 'hono/streaming';
+import { rateLimiter } from "hono-rate-limiter";
 
 // TODO: Export build types
 import { parseResponseData, PersonaGenerator  } from '@fleek-platform/persona-generator';
@@ -21,6 +22,16 @@ api.use('/*', cors({
   maxAge: 86400,
   credentials: true,
 }));
+
+api.use(
+  rateLimiter({
+    windowMs: 1 * 60 * 1000,
+    limit: 60,
+    standardHeaders: "draft-6",
+    keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
+    // TODO: set `store` as redisStore https://www.npmjs.com/package/@hono-rate-limiter/redis
+  })
+);
 
 api.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
 
@@ -75,53 +86,30 @@ api.post('/assistant/stream', async (ctx) => {
     model,
   });
 
-  return stream(ctx, async (streamWriter) => {
+  const responseStream = await personaGenerator.assistantQueryStream({ content, messages });
+
+  return streamText(ctx, async (streamWriter) => {
     try {
-      const stream = await personaGenerator.assistantQueryStream({ content, messages });
-      
-      let fullText = '';
-      
-      for await (const chunk of stream) {
+      for await (const chunk of responseStream) {
         const content = chunk.choices[0]?.delta?.content || '';
-        if (content) {
-          fullText += content;
-          await streamWriter.write(content);
-        }
+        await streamWriter.write(content);
       }
     } catch (error) {
       console.error('Streaming error:', error);
-      await streamWriter.write(`Error: ${error.message}`);
     }
   });
 });
 
-api.post('/generate/stream', async (ctx) => {
-  const { content } = await ctx.req.json();
-  
-  const personaGenerator = new PersonaGenerator({
-    apiKey,
-    baseURL,
-    model,
-  });
-
-  return stream(ctx, async (streamWriter) => {
-    try {
-      const stream = await personaGenerator.generateCharacterfileStream({ content });
-      
-      let fullText = '';
-      
-      for await (const chunk of stream) {
-        const content = chunk.choices[0]?.delta?.content || '';
-        if (content) {
-          fullText += content;
-          await streamWriter.write(content);
-        }
-      }
-      
-      console.log('Full streamed response:', fullText);
-    } catch (error) {
-      console.error('Streaming error:', error);
-      await streamWriter.write(`Error: ${error.message}`);
+api.get('/stream', (c) => {
+  console.log("Streaming started!");
+  return streamText(c, async (stream) => {
+    for (let i = 1; i <= 5; i++) {
+      const chunk = `Chunk ${i}\n`;
+      console.log(`Sending: ${chunk}`);
+      await stream.write(chunk);
+      await new Promise((r) => setTimeout(r, 1000));
     }
+    await stream.close();
+    console.log("Stream closed.");
   });
 });

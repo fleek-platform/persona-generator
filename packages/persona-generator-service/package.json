@@ -4,9 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@fleek-platform/persona-generator": "*",
     "esbuild": "^0.14.14",
     "hono": "^4.7.6",
-    "@fleek-platform/persona-generator": "*"
+    "hono-rate-limiter": "^0.4.2"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.92",
