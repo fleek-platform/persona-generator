@@ -42,7 +42,7 @@ bun i
 
 If you'll be interacting with services, you'll need to set up the environment variables.
 
-Create a local file named `.env` and declare the following environment variables for the environment you're interested (below we're using the public~production settings):
+Create a local file named `.env` and declare the following environment variables for the environment you're interested:
 
 ```sh
 PUBLIC_FLEEK_REST_API_URL="https://api.fleek.xyz"
@@ -51,6 +51,8 @@ PUBLIC_OPENAI_COMPATIBLE_MODEL=***
 PUBLIC_PERSONA_GENERATOR_ENVIRONMENT=***
 PUBLIC_PERSONA_GENERATOR_CUSTOM_DOMAIN_NAME=***
 PUBLIC_PERSONA_GENERATOR_CERTIFICATE_ARN=***
+PRIVATE_OPENAI_COMPATIBLE_API_KEY=***
+PRIVATE_STACK_NAME_PREFIX=***
 ```
 
 The application uses the [getDefined](./src/defined.ts) to lookup for environment variables.
