@@ -35,9 +35,14 @@ api.use(
       try {
         const forwardedFor = ctx.req.header('x-forwarded-for');
         const sourceIp = 
-          (forwardedFor ? forwardedFor.split(',')[0].trim() : '') || 
-          ctx.req.header('x-amzn-trace-id') || 
+          (forwardedFor ? forwardedFor.split(',')[0].trim() : '') ||
+          // TODO: This only applies for gw and lb
+          // which don't support stream response, thus
+          // we never need to lookup or expect them.
+          // Since there aren't alternatives? We might
+          // want to deny the request going forward?
           ctx.req.header('x-amzn-source-ip') ||
+          ctx.req.header('x-amzn-trace-id') || 
           '';
 
         if (!sourceIp) {
