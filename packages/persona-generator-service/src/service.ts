@@ -7,6 +7,7 @@ import { rateLimiter } from "hono-rate-limiter";
 import { parseResponseData, PersonaGenerator  } from '@fleek-platform/persona-generator';
 
 import { getDefined } from './defined.js';
+import { authMiddleware } from './middleware.js';
 
 const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
 const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
@@ -14,11 +15,14 @@ const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
 
 export const api = new Hono().basePath('/v1');
 
+const HEALTH_ENDPOINT = '/health';
+const UNKNOWN_IP_ADDRESS = '0.0.0.0';
+
 // TODO: Set allowed origin list
 api.use('/*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'Priority'],
+  allowHeaders: ['content-type', 'authorization', 'accept', 'priority', 'x-project-id'],
   maxAge: 86400,
   credentials: true,
 }));
@@ -27,13 +31,40 @@ api.use(
   rateLimiter({
     windowMs: 1 * 60 * 1000,
     limit: 60,
-    standardHeaders: "draft-6",
-    keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
+    standardHeaders: false,
+    keyGenerator: (ctx) => {      
+      try {
+        const forwardedFor = ctx.req.header('x-forwarded-for');
+        const sourceIp = 
+          (forwardedFor ? forwardedFor.split(',')[0].trim() : '') || 
+          ctx.req.header('x-amzn-trace-id') || 
+          ctx.req.header('x-amzn-source-ip') ||
+          '';
+
+        if (!sourceIp) {
+          throw new Error('No valid client IP found for rate limiting');
+        }
+
+        return sourceIp;
+      } catch (err) {
+        console.error('Rate limiter error:', err);
+
+        return UNKNOWN_IP_ADDRESS;
+      }
+    },
     // TODO: set `store` as redisStore https://www.npmjs.com/package/@hono-rate-limiter/redis
   })
 );
 
-api.get('/health', (ctx) => ctx.text('I am here live. I am not a cat!'));
+api.use('*', async (ctx, next) => {
+  if (ctx.req.path === HEALTH_ENDPOINT) {
+    return await next();
+  }
+  
+  return authMiddleware(ctx, next);
+});
+
+api.get(HEALTH_ENDPOINT, (ctx) => ctx.text('I am here live. I am not a cat!'));
 
 api.post('/assistant', async (ctx) => {
   const { content, messages } = await ctx.req.json();

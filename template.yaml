@@ -15,6 +15,9 @@ Parameters:
   PublicOpenAIModel:
     Type: String
     Description: The public OpenAI model
+  PublicFleekRestApiUrl:
+    Type: String
+    Description: The public Fleek Rest Api URL
   DomainName:
     Type: String
     Description: The custom domain name (e.g., api.example.com)
@@ -43,6 +46,7 @@ Resources:
           PRIVATE_OPENAI_COMPATIBLE_API_KEY: !Ref PrivateOpenAIApiKey
           PUBLIC_OPENAI_COMPATIBLE_API_URL: !Ref PublicOpenAIApiUrl
           PUBLIC_OPENAI_COMPATIBLE_MODEL: !Ref PublicOpenAIModel
+          PUBLIC_FLEEK_REST_API_URL: !Ref PublicFleekRestApiUrl
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
