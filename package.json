@@ -11,7 +11,7 @@
     "dev": "scripts/dev-watcher",
     "service:build": "sam build --build-in-source --parameter-overrides Environment=staging",
     "service:deploy": "bun run service:build && ./scripts/dev-deploy",
-    "service:logs": "sam logs -n PersonaGeneratorService --stack-name persona-generator-test-service --tail",
+    "service:logs": "sam logs -n PersonaGeneratorService --tail",
     "service:validate": "sam validate",
     "service:info": "sam list resources"
   },
