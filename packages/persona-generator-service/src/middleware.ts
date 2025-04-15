@@ -1,5 +1,6 @@
 import { createMiddleware } from 'hono/factory';
 import { isValidUserProjectAccount } from './rest-api-client';
+import { decodeProjectId } from './utils/accessToken.js';
 
 export const authMiddleware = createMiddleware(async (ctx, next) => {
   const authHeader = ctx.req.header('Authorization');
@@ -9,8 +10,13 @@ export const authMiddleware = createMiddleware(async (ctx, next) => {
   }
   
   const accessToken = authHeader.split(' ')[1];
-  
-  const projectId = ctx.req.header('x-project-id');
+
+  // TODO: Ideally we'd rather have a header
+  // that allows x-project-id
+  // at the moment cloudfront doesn't seem to allow it
+  // for some reason, so we decode it from token
+  // but token shouldn't have the projectid in it :T  
+  const projectId = decodeProjectId(accessToken);
 
   if (!projectId) {
     console.warn(`Expected a valid project id but got ${projectId} (${typeof projectId})`);

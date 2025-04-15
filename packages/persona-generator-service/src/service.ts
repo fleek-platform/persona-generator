@@ -21,7 +21,10 @@ const UNKNOWN_IP_ADDRESS = '0.0.0.0';
 api.use('/*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST'],
-  allowHeaders: ['content-type', 'authorization', 'accept', 'priority', 'x-project-id'],
+  // TODO: Ideally we'd like to allow x-project-id
+  // as we shouldn't get from accessToken. The accessToken
+  // shouldn't have projectId in it?
+  allowHeaders: ['content-type', 'authorization', 'accept', 'priority'],
   maxAge: 86400,
   credentials: true,
 }));
@@ -61,10 +64,14 @@ api.use(
 );
 
 api.use('*', async (ctx, next) => {
-  if (ctx.req.path === HEALTH_ENDPOINT) {
+  if (ctx.req.path.endsWith(HEALTH_ENDPOINT)) {
     return await next();
   }
-  
+
+  if (ctx.req.path.endsWith('stream-test')) {
+    return await next();
+  }
+
   return authMiddleware(ctx, next);
 });
 
@@ -132,5 +139,19 @@ api.post('/assistant/stream', async (ctx) => {
     } catch (error) {
       console.error('Streaming error:', error);
     }
+  });
+});
+
+api.get('/stream-test', (c) => {
+  console.log("Streaming started!");
+  return streamText(c, async (stream) => {
+    for (let i = 1; i <= 5; i++) {
+      const chunk = `Chunk ${i}\n`;
+      console.log(`Sending: ${chunk}`);
+      await stream.write(chunk);
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+    await stream.close();
+    console.log("Stream closed.");
   });
 });

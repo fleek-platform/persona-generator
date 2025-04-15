@@ -85,6 +85,7 @@ Resources:
               - Content-Type
               - Origin
               - Referer
+              # - X-Project-ID doesn't work for some reason
             Cookies:
               Forward: all
           ViewerProtocolPolicy: redirect-to-https
