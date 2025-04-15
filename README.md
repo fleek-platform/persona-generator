@@ -45,13 +45,12 @@ If you'll be interacting with services, you'll need to set up the environment va
 Create a local file named `.env` and declare the following environment variables for the environment you're interested (below we're using the public~production settings):
 
 ```sh
+PUBLIC_FLEEK_REST_API_URL="https://api.fleek.xyz"
 PUBLIC_OPENAI_COMPATIBLE_API_URL=***
 PUBLIC_OPENAI_COMPATIBLE_MODEL=***
-PUBLIC_FLEEK_REST_API_URL="https://api.fleek.xyz"
 PUBLIC_PERSONA_GENERATOR_ENVIRONMENT=***
 PUBLIC_PERSONA_GENERATOR_CUSTOM_DOMAIN_NAME=***
 PUBLIC_PERSONA_GENERATOR_CERTIFICATE_ARN=***
-PRIVATE_OPENAI_COMPATIBLE_API_KEY=***
 ```
 
 The application uses the [getDefined](./src/defined.ts) to lookup for environment variables.
@@ -71,12 +70,16 @@ bun run dev
 
 You'll find information about the local server in the output.
 
+> [!IMPORTANT]  
+> Every request apart from /health requires a valid access token and project id, e.g. "Authorization: Bearer <User-Access-Token>", "X-Project-ID: <User-Project-ID>"
+
 Use your favourite client to make requests, e.g. cURL:
 
 ```sh
 curl \
   -X POST \
   -H "Content-Type: application/json" \
+  -H "x-project-id: <User-Project-ID>" \
   -d '{
     "content": "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
   }' \
@@ -89,7 +92,8 @@ An example using fetch:
 fetch('http://localhost:3030/v1/generate', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    "x-project-id": "<User-Project-ID>",
   },
   body: JSON.stringify({
     content: "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
@@ -251,14 +255,7 @@ Here's an example of quick health checkup via the production hostname:
 
 ```sh
 curl -X GET \
-  https://lambda.flkservices.io/v1/health
-```
-
-It's mapped into endpoint:
-
-```sh
-curl -X GET \
-  https://02xuym9fgk.execute-api.eu-west-2.amazonaws.com/prod/health
+  https://persona-generator-service.flkservices.io/v1/health
 ```
 
 For any other routes, read the [packages/persona-generator-service/src/service.ts](./packages/persona-generator-service/src/service.ts).
