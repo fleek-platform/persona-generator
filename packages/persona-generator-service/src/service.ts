@@ -1,9 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { stream, streamText } from 'hono/streaming';
+import { streamText } from 'hono/streaming';
 import { rateLimiter } from "hono-rate-limiter";
 
-// TODO: Export build types
 import { parseResponseData, PersonaGenerator  } from '@fleek-platform/persona-generator';
 
 import { getDefined } from './defined.js';
@@ -21,7 +20,7 @@ const UNKNOWN_IP_ADDRESS = '0.0.0.0';
 // TODO: Set allowed origin list
 api.use('/*', cors({
   origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowMethods: ['GET', 'POST'],
   allowHeaders: ['content-type', 'authorization', 'accept', 'priority', 'x-project-id'],
   maxAge: 86400,
   credentials: true,
@@ -128,19 +127,5 @@ api.post('/assistant/stream', async (ctx) => {
     } catch (error) {
       console.error('Streaming error:', error);
     }
-  });
-});
-
-api.get('/stream', (c) => {
-  console.log("Streaming started!");
-  return streamText(c, async (stream) => {
-    for (let i = 1; i <= 5; i++) {
-      const chunk = `Chunk ${i}\n`;
-      console.log(`Sending: ${chunk}`);
-      await stream.write(chunk);
-      await new Promise((r) => setTimeout(r, 1000));
-    }
-    await stream.close();
-    console.log("Stream closed.");
   });
 });
