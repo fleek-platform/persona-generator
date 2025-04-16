@@ -54,7 +54,7 @@ jobs:
 
       - name: Build packages
         run: |
-          bun --filter "packages/persona-generator" build
+          bun --filter "./packages/persona-generator" build
         
       - name: Deploy
         run: |
