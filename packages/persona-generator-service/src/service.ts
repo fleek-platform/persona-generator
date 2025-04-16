@@ -22,8 +22,8 @@ api.use('/*', cors({
   origin: '*',
   allowMethods: ['GET', 'POST'],
   // TODO: Ideally we'd like to allow x-project-id
-  // as we shouldn't get from accessToken. The accessToken
-  // shouldn't have projectId in it?
+  // as we shouldn't get from accessToken
+  // The accessToken shouldn't have projectId in it?!
   allowHeaders: ['content-type', 'authorization', 'accept', 'priority'],
   maxAge: 86400,
   credentials: true,
