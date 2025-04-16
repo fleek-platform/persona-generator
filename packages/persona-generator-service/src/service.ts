@@ -77,27 +77,6 @@ api.use('*', async (ctx, next) => {
 
 api.get(HEALTH_ENDPOINT, (ctx) => ctx.text('I am here live. I am not a cat!'));
 
-api.post('/assistant', async (ctx) => {
-  const { content, messages } = await ctx.req.json();
-  if (typeof content !== 'string' || !content) {
-    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
-  }
-
-  const personaGenerator = new PersonaGenerator({
-    apiKey,
-    baseURL,
-    model,
-  });
-
-  const { data, error, status } = await personaGenerator.assistantQuery({ content, messages });
-
-  if (!data || error || status !== 'success') {
-    return ctx.json({ status: 'error', error: error || 'Unexpected error' });
-  }
-
-  return ctx.json({ status: 'success', data });
-});
-
 api.post('/generate', async (ctx) => {
   const { content } = await ctx.req.json();
   

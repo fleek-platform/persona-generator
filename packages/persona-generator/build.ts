@@ -3,6 +3,12 @@ import { build, type BuildOptions } from 'esbuild';
 import { parseEnvVarsAsKeyVal } from './src/utils/env';
 import { type Defined, defined } from './src/defined';
 
+import pkgJson from './package.json';
+
+const external = [
+  ...Object.keys(pkgJson.dependencies),
+];
+
 const define = parseEnvVarsAsKeyVal<Defined>({
   defined,
 });
@@ -21,6 +27,7 @@ const main = async () => {
     sourcemap: true,
     minify: true,
     outdir: 'dist',
+    external,
   };
 
   try {
