@@ -47,5 +47,4 @@ jobs:
         
       - name: Deploy
         run: |
-          echo "🤖 Deploying to environment: $PUBLIC_PERSONA_GENERATOR_ENVIRONMENT"
           doppler run -- bun run service:deploy
