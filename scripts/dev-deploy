@@ -9,9 +9,9 @@ if [[ -z "$CI" && ! -f "$dotEnvFilename" ]]; then
   echo "👹 Oops! A dotenv file ($dotEnvFilename) wasn't found."
 
   exit 1
+else
+  source "$dotEnvFilename"
 fi
-
-source "$dotEnvFilename"
 
 if [[ "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "staging" || "$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" == "production" ]]; then
   STACK_NAME="$PRIVATE_STACK_NAME_PREFIX-$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT"
