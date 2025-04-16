@@ -54,8 +54,8 @@ jobs:
 
       - name: Build packages
         run: |
-          bun --filter "./packages/persona-generator" build
-        
+          doppler run -- bun --filter "./packages/persona-generator" build
+
       - name: Deploy
         run: |
           doppler run -- bun run service:deploy
