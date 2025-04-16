@@ -3,6 +3,7 @@
 echo "🤖 Development deployment..."
 
 dotEnvFilename=".env"
+deployOptions=""
 
 if [[ ! -f "$dotEnvFilename" ]]; then
   echo "👹 Oops! A dotenv file ($dotEnvFilename) wasn't found."
@@ -20,8 +21,13 @@ else
   exit 1
 fi
 
+if [[ ! -z "$CI" ]]; then
+  deployOptions="--no-confirm-changeset"
+fi
+
 sam deploy \
   --stack-name "$STACK_NAME" \
+  "$deployOptions" \
   --parameter-overrides \
     Environment="$PUBLIC_PERSONA_GENERATOR_ENVIRONMENT" \
     CertificateArn="$PUBLIC_PERSONA_GENERATOR_CERTIFICATE_ARN" \

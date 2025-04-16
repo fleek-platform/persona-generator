@@ -1,0 +1,51 @@
+name: 🚀 Deploy Persona Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        required: true
+        description: 'Environment to deploy to'
+        default: staging
+        options:
+          - staging
+          - production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          
+      - name: Install AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Setup Doppler
+        run: |
+          doppler configure set token "$DOPPLER_TOKEN"
+
+      - name: Install dependencies
+        run: bun i
+        
+      - name: Deploy
+        run: |
+          echo "🤖 Deploying to environment: $PUBLIC_PERSONA_GENERATOR_ENVIRONMENT"
+          doppler run -- bun run service:deploy
