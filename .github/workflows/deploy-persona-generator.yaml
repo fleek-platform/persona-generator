@@ -12,6 +12,13 @@ on:
           - staging
           - production
 
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+  NODE_OPTIONS: "--max-old-space-size=8192"
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
