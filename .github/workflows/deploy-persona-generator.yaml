@@ -51,6 +51,10 @@ jobs:
 
       - name: Install dependencies
         run: bun i
+
+      - name: Build packages
+        run: |
+          bun --filter "packages/persona-generator" build
         
       - name: Deploy
         run: |
