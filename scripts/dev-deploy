@@ -5,7 +5,7 @@ echo "🤖 Development deployment..."
 dotEnvFilename=".env"
 deployOptions=""
 
-if [[ ! -f "$dotEnvFilename" ]]; then
+if [[ -z "$CI" && ! -f "$dotEnvFilename" ]]; then
   echo "👹 Oops! A dotenv file ($dotEnvFilename) wasn't found."
 
   exit 1
