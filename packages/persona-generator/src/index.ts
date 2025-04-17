@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-import { systemRolePrompt, systemAssistantRolePrompt } from '@base/prompts/index.js';
+import { systemRolePrompt, systemRolePromptV2, systemAssistantRolePrompt } from '@base/prompts/index.js';
 
 export { parseResponseData } from './utils/json.js';
 
@@ -56,6 +56,47 @@ export class PersonaGenerator {
         messages: [{
           role: "system",
           content: systemRolePrompt,
+        }, {
+          role: 'user',
+          content,    
+        }],
+        model: this.model,
+      });
+
+      const data = completion.choices[0].message.content || '';
+
+      return {
+        status: 'success',
+        data,
+        error: '',
+      };
+    } catch (error) {
+      return {
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  async generateCharacterfileV2({
+    content,
+  }: {
+    content: string;
+  }): ExecResponse {
+    const parsedContent = contentSchema.safeParse(content);
+    
+    if (!parsedContent.success) {
+      return {
+        status: 'error',
+        error: parsedContent.error.message,
+      };
+    }
+
+    try {
+      const completion = await this.openai.chat.completions.create({
+        messages: [{
+          role: "system",
+          content: systemRolePromptV2,
         }, {
           role: 'user',
           content,    

@@ -12,7 +12,10 @@ const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
 const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
 const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
 
-export const api = new Hono().basePath('/v1');
+const v1 = new Hono();
+const v2 = new Hono();
+
+export const api = new Hono();
 
 const HEALTH_ENDPOINT = '/health';
 const UNKNOWN_IP_ADDRESS = '0.0.0.0';
@@ -77,7 +80,7 @@ api.use('*', async (ctx, next) => {
 
 api.get(HEALTH_ENDPOINT, (ctx) => ctx.text('I am here live. I am not a cat!'));
 
-api.post('/generate', async (ctx) => {
+v1.post('/generate', async (ctx) => {
   const { content } = await ctx.req.json();
   
   const personaGenerator = new PersonaGenerator({
@@ -92,10 +95,10 @@ api.post('/generate', async (ctx) => {
     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
   }
 
-  return ctx.json({ status: 'success', data: parseResponseData(data), apiKey, baseURL, model });
+  return ctx.json({ status: 'success', data: parseResponseData(data) });
 });
 
-api.post('/assistant/stream', async (ctx) => {
+v1.post('/assistant/stream', async (ctx) => {
   const { content, messages } = await ctx.req.json();
   if (typeof content !== 'string' || !content) {
     return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
@@ -121,7 +124,7 @@ api.post('/assistant/stream', async (ctx) => {
   });
 });
 
-api.get('/stream-test', (c) => {
+v1.get('/stream-test', (c) => {
   console.log("Streaming started!");
   return streamText(c, async (stream) => {
     for (let i = 1; i <= 5; i++) {
@@ -134,3 +137,25 @@ api.get('/stream-test', (c) => {
     console.log("Stream closed.");
   });
 });
+
+v2.post('/generate', async (ctx) => {
+  const { content } = await ctx.req.json();
+  
+  const personaGenerator = new PersonaGenerator({
+    apiKey,
+    baseURL,
+    model,
+  });
+
+  const { data, error, status } = await personaGenerator.generateCharacterfileV2({ content });
+
+  if (!data || error || status !== 'success') {
+    return ctx.json({ status: 'error', error: error || 'Unexpected error' });
+  }
+
+  return ctx.json({ status: 'success', data: parseResponseData(data) });
+});
+
+// [WARN]: Register the routes before mounting to main api
+api.route('/v1', v1);
+api.route('/v2', v2);
