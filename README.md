@@ -73,7 +73,7 @@ bun run dev
 You'll find information about the local server in the output.
 
 > [!IMPORTANT]  
-> Every request apart from /health requires a valid access token and project id, e.g. "Authorization: Bearer <User-Access-Token>", "X-Project-ID: <User-Project-ID>"
+> Every request apart from /health requires a valid access token, which at time of writing assumes the token includes a project id, e.g. "Authorization: Bearer <User-Access-Token>"
 
 Use your favourite client to make requests, e.g. cURL:
 
@@ -81,7 +81,7 @@ Use your favourite client to make requests, e.g. cURL:
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -H "x-project-id: <User-Project-ID>" \
+  -H 'authorization: Bearer <USER-ACCESS-TOKEN>' \
   -d '{
     "content": "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
   }' \
@@ -95,7 +95,7 @@ fetch('http://localhost:3030/v1/generate', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    "x-project-id": "<User-Project-ID>",
+    'Authorization': 'Bearer <USER-ACCESS-TOKEN>',
   },
   body: JSON.stringify({
     content: "Create an agent called Robocop, that has the following treats, its funny, likes to dance, travel the world, but he needs the internet. Use my openai api key abcd-efgh-ijkl-mnop-qrst and my twitter username robocopkid16"
