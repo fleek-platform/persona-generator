@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@changesets/cli": "^2.28.1",
-    "@fleek-platform/agents-ui": "7.30.0-rc.1",
+    "@fleek-platform/agents-ui": "8.1.2-rc.1",
     "@types/bun": "^1.2.5",
     "abort-controller": "^3.0.0",
     "biome": "^0.3.3",
