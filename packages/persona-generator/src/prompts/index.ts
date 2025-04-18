@@ -324,7 +324,15 @@ ${CHARACTER_FILE_SCHEMA_TEXT}
 
 4. The Data structure schema or fields MUST STRICTLY OBEY the schema ${requiredSchema}
 
-5. MUST include plugin names only if the user requests it. If the user provides name of a plugin, the assistant MUST select closest match from following list, e.g. if the user says twitter, you'd select @elizaos/plugin-twitter because its the closest match. The list of available plugins is the following ${PLUGIN_NAMES.join(', ')}.
+5. MUST include plugin names only if the user requests it. If the user provides name of a plugin, the assistant MUST select closest match from following list, e.g. if the user says twitter, you'd select @elizaos/plugin-twitter because its the closest match. The list of available plugins is the following ${PLUGIN_NAMES.join(', ')}. Whenever "list of available plugins" is mentioned, use the provided list in comma separated values (csv) here. Never include plugins that haven't been requested or suggested by the user!
+
+BAD EXAMPLE (Do not do this):
+- The ${ChatSystemRoleNameForUser} mentions or requests the coingecko plugin
+- You ${ChatSystemRoleNameForAgent} select @elizaos/plugin-giphy from the list of available plugins
+
+GOOD EXAMPLE (Do this instead):
+- The ${ChatSystemRoleNameForUser} mentions or requests the coingecko plugin
+- You ${ChatSystemRoleNameForAgent} select @elizaos/plugin-coingecko from the list of available plugins
 
 6. Deterministic approach to field ordering:
 - Sort all object keys alphabetically
@@ -370,7 +378,15 @@ ${CHARACTER_FILE_SCHEMA_TEXT_V2}
 
 4. The Data structure schema or fields MUST STRICTLY OBEY the schema ${requiredSchemaV2}
 
-5. The plugins sections MUST ALWAYS have the plugins '@elizaos/plugin-twitter' and '@elizaos/plugin-openai'. Include other plugins only if the user mentions it. If the user provides name of a plugin, the assistant MUST select closest match from following list, e.g. if the user says twitter, you'd select @elizaos/plugin-twitter because its the closest match. The list of available plugins is the following ${PLUGIN_NAMES_V2.join(', ')}.
+5. The plugins sections MUST ALWAYS have the mandatory plugins @elizaos/plugin-twitter and @elizaos/plugin-openai. Include other plugins only if the user mentions it. If the user provides name of a plugin, the assistant MUST select closest match from following list, e.g. if the user says twitter, you'd select @elizaos/plugin-twitter because its the closest match. The list of available plugins is the following ${PLUGIN_NAMES_V2.join(', ')}. Whenever "list of available plugins" is mentioned, use the provided list in comma separated values (csv) here. Never include plugins that haven't been requested or suggested by the user unless they are mandatory.
+
+BAD EXAMPLE (Do not do this):
+- The ${ChatSystemRoleNameForUser} mentions or requests the coingecko plugin
+- You ${ChatSystemRoleNameForAgent} select @elizaos/plugin-giphy from the list of available plugins
+
+GOOD EXAMPLE (Do this instead):
+- The ${ChatSystemRoleNameForUser} mentions or requests the coingecko plugin
+- You ${ChatSystemRoleNameForAgent} select @elizaos/plugin-coingecko from the list of available plugins
 
 6. Deterministic approach to field ordering:
 - Sort all object keys alphabetically
