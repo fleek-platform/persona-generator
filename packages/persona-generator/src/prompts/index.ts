@@ -1,6 +1,6 @@
 import { ChatSystemRoleNameForUser, ChatSystemRoleNameForAgent, CLIENT_NAMES, PLUGIN_NAMES, MODEL_PROVIDER_NAMES, characterfileSchema } from '@fleek-platform/agents-ui';
 
-import { strictlyMatchTermList, mandatoryBasedOnUserDescription, someExamplesIncluding, fixedNumberExamplesOf, putUserTermOrCreateOne, pickMatchTermFromList, userInputIf, simulateInteraction, putAssistantTerm, strictlyMatchTermListOrFallback  } from '../utils/prompt.js';
+import { strictlyMatchTermList, mandatoryBasedOnUserDescription, someExamplesIncluding, fixedNumberExamplesOf, putUserTermOrCreateOne, pickMatchTermFromList, userInputIf, simulateInteraction, putAssistantTerm, strictlyMatchTermListOrFallback, ifMissingValueDefaultTo } from '../utils/prompt.js';
 
 // TODO: Replace with import once v2 support
 // on agents ui's available
@@ -38,14 +38,14 @@ const CHARACTER_FILE_SCHEMA_TEXT = `{
       TWITTER_PASSWORD: ${userInputIf('TWITTER_PASSWORD')},
       TWITTER_EMAIL: ${userInputIf('TWITTER_EMAIL')},
       TWITTER_2FA_SECRET: ${userInputIf('TWITTER_2FA_SECRET')},
-      POST_IMMEDIATELY: "true",
-      ENABLE_ACTION_PROCESSING: "true",
-      MAX_ACTIONS_PROCESSING: "10",
-      POST_INTERVAL_MAX: "180",
-      POST_INTERVAL_MIN: "90",
-      TWITTER_SPACES_ENABLE: "false",
-      ACTION_TIMELINE_TYPE: "foryou",
-      TWITTER_POLL_INTERVAL: "120"
+      POST_IMMEDIATELY: ${ifMissingValueDefaultTo('true')},
+      ENABLE_ACTION_PROCESSING: ${ifMissingValueDefaultTo('true')},
+      MAX_ACTIONS_PROCESSING: ${ifMissingValueDefaultTo('10')},
+      POST_INTERVAL_MAX: ${ifMissingValueDefaultTo('180')},
+      POST_INTERVAL_MIN: ${ifMissingValueDefaultTo('90')},
+      TWITTER_SPACES_ENABLE: ${ifMissingValueDefaultTo('false')},
+      ACTION_TIMELINE_TYPE: ${ifMissingValueDefaultTo('foryou')},
+      TWITTER_POLL_INTERVAL: ${ifMissingValueDefaultTo('120')}
     },
     voice: {
       model: "en_GB-alan-medium",
@@ -117,6 +117,19 @@ const CHARACTER_FILE_SCHEMA_TEXT_V2 = `{
   name: ${putAssistantTerm('name')},
   settings: {
     secrets: {
+      OPENAI_API_KEY: ${userInputIf('OPENAI_API_KEY')},
+      TWITTER_USERNAME: ${userInputIf('TWITTER_USERNAME')},
+      TWITTER_PASSWORD: ${userInputIf('TWITTER_PASSWORD')},
+      TWITTER_EMAIL: ${userInputIf('TWITTER_EMAIL')},
+      TWITTER_2FA_SECRET: ${userInputIf('TWITTER_2FA_SECRET')},
+      POST_IMMEDIATELY: ${ifMissingValueDefaultTo('true')},
+      ENABLE_ACTION_PROCESSING: ${ifMissingValueDefaultTo('true')},
+      MAX_ACTIONS_PROCESSING: ${ifMissingValueDefaultTo('10')},
+      POST_INTERVAL_MAX: ${ifMissingValueDefaultTo('180')},
+      POST_INTERVAL_MIN: ${ifMissingValueDefaultTo('90')},
+      TWITTER_SPACES_ENABLE: ${ifMissingValueDefaultTo('false')},
+      ACTION_TIMELINE_TYPE: ${ifMissingValueDefaultTo('foryou')},
+      TWITTER_POLL_INTERVAL: ${ifMissingValueDefaultTo('120')}
     },
     voice: {
       model: "en_GB-alan-medium",

@@ -68,6 +68,8 @@ export const putUserTermOrCreateOne = (term: string, count: number) => `<${getTe
 
 export const putAssistantTerm = (term: string) => `<${getTerm('MUST')} use ${term} described by Assistant, if user failed to provide, ${getTerm('MUST')} create ${term}>`;
 
-export const userInputIf = (key: string) => `<If ${key} provided put it here otherwise remove the property>`;
+export const userInputIf = (key: string) => `<If ${key} provided by user put it here, otherwise remove the property>`;
 
 export const simulateInteraction = (description: string) => `<${getTerm('MUST')} simulate ${description}>`
+
+export const ifMissingValueDefaultTo = (value: string) => `<If provided by user put it here, otherwise default to ${value}>`;
