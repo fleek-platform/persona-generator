@@ -156,6 +156,32 @@ v2.post('/generate', async (ctx) => {
   return ctx.json({ status: 'success', data: parseResponseData(data) });
 });
 
+v2.post('/assistant/stream', async (ctx) => {
+  const { content, messages } = await ctx.req.json();
+  if (typeof content !== 'string' || !content) {
+    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
+  }
+
+  const personaGenerator = new PersonaGenerator({
+    apiKey,
+    baseURL,
+    model,
+  });
+
+  const responseStream = await personaGenerator.assistantQueryStreamV2({ content, messages });
+
+  return streamText(ctx, async (streamWriter) => {
+    try {
+      for await (const chunk of responseStream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        await streamWriter.write(content);
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+    }
+  });
+});
+
 // [WARN]: Register the routes before mounting to main api
 api.route('/v1', v1);
 api.route('/v2', v2);

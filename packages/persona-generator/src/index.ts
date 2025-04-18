@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-import { systemRolePrompt, systemRolePromptV2, systemAssistantRolePrompt } from '@base/prompts/index.js';
+import { systemRolePrompt, systemRolePromptV2, systemAssistantRolePrompt, systemAssistantRolePromptV2 } from '@base/prompts/index.js';
 
 export { parseResponseData } from './utils/json.js';
 
@@ -151,6 +151,28 @@ export class PersonaGenerator {
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
+  }
+
+  async assistantQueryStreamV2({
+    content,
+    messages,
+  }: {
+    content: string;
+    messages: string;
+  }) {    
+    const stream = await this.openai.chat.completions.create({
+      messages: [{
+        role: "system",
+        content: systemAssistantRolePromptV2.replace('$messages', messages),
+      }, {
+        role: 'user',
+        content,    
+      }],
+      model: this.model,
+      stream: true,
+    });
+
+    return stream;
   }
 
   async assistantQueryStream({
