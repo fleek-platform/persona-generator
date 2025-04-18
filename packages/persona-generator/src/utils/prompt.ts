@@ -72,4 +72,4 @@ export const userInputIf = (key: string) => `<If ${key} provided by user put it 
 
 export const simulateInteraction = (description: string) => `<${getTerm('MUST')} simulate ${description}>`
 
-export const ifMissingValueDefaultTo = (value: string) => `<If provided by user put it here, otherwise default to ${value}>`;
+export const ifMissingValueDefaultTo = (value: string) => `<If provided by user put it here, otherwise default to ${value}. MUST respect the type ${typeof value}, e.g. string requires quotes>`;

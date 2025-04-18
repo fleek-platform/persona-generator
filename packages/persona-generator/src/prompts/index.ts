@@ -1,29 +1,6 @@
-import { ChatSystemRoleNameForUser, ChatSystemRoleNameForAgent, CLIENT_NAMES, PLUGIN_NAMES, MODEL_PROVIDER_NAMES, characterfileSchema } from '@fleek-platform/agents-ui';
+import { ChatSystemRoleNameForUser, ChatSystemRoleNameForAgent, CLIENT_NAMES, PLUGIN_NAMES, MODEL_PROVIDER_NAMES, PLUGIN_NAMES_V2 } from '@fleek-platform/agents-ui';
 
-import { strictlyMatchTermList, mandatoryBasedOnUserDescription, someExamplesIncluding, fixedNumberExamplesOf, putUserTermOrCreateOne, pickMatchTermFromList, userInputIf, simulateInteraction, putAssistantTerm, strictlyMatchTermListOrFallback, ifMissingValueDefaultTo } from '../utils/prompt.js';
-
-// TODO: Replace with import once v2 support
-// on agents ui's available
-export const PLUGIN_NAMES_V2 = [
-  '@elizaos/plugin-discord',
-  '@elizaos/plugin-farcaster',
-  '@elizaos/plugin-telegram',
-  '@elizaos/plugin-twitter',
-  '@elizaos/plugin-anthropic',
-  '@elizaos/plugin-groq',
-  '@elizaos/plugin-local-ai',
-  '@elizaos/plugin-openai',
-  '@elizaos/plugin-venice',
-  '@fleek-platform/eliza-plugin-mcp',
-  '@elizaos/plugin-browser',
-  '@elizaos/plugin-pdf',
-  '@elizaos/plugin-redpill',
-  '@elizaos/plugin-sql',
-  '@elizaos/plugin-storage-s3',
-  '@elizaos/plugin-video-understanding',
-  '@elizaos/plugin-evm',
-  '@elizaos/plugin-solana',
-] as const;
+import { strictlyMatchTermList, mandatoryBasedOnUserDescription, fixedNumberExamplesOf, pickMatchTermFromList, userInputIf, simulateInteraction, putAssistantTerm, strictlyMatchTermListOrFallback, ifMissingValueDefaultTo } from '../utils/prompt.js';
 
 // Ref
 // https://github.com/elizaOS/eliza/blob/908fff3a14bb2c0c12bc34b9946477cda8de48e4/scripts/generatecharacter.js
