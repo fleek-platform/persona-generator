@@ -29,7 +29,7 @@ Globals:
   Function:
     Runtime: nodejs20.x
     Architectures: [arm64]
-    Timeout: 32
+    Timeout: 40
 
 Resources:
   PersonaGeneratorService:
