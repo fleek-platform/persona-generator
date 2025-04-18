@@ -33,6 +33,19 @@ const CHARACTER_FILE_SCHEMA_TEXT = `{
   modelProvider: ${pickMatchTermFromList(MODEL_PROVIDER_NAMES, 'model', 1)},
   settings: {
     secrets: {
+      OPENAI_API_KEY: ${userInputIf('OPENAI_API_KEY')},
+      TWITTER_USERNAME: ${userInputIf('TWITTER_USERNAME')},
+      TWITTER_PASSWORD: ${userInputIf('TWITTER_PASSWORD')},
+      TWITTER_EMAIL: ${userInputIf('TWITTER_EMAIL')},
+      TWITTER_2FA_SECRET: ${userInputIf('TWITTER_2FA_SECRET')},
+      POST_IMMEDIATELY: "true",
+      ENABLE_ACTION_PROCESSING: "true",
+      MAX_ACTIONS_PROCESSING: "10",
+      POST_INTERVAL_MAX: "180",
+      POST_INTERVAL_MIN: "90",
+      TWITTER_SPACES_ENABLE: "false",
+      ACTION_TIMELINE_TYPE: "foryou",
+      TWITTER_POLL_INTERVAL: "120"
     },
     voice: {
       model: "en_GB-alan-medium",
@@ -175,6 +188,19 @@ const requiredSchema = `
   "modelProvider": "",
   "settings": {
     "secrets": {
+      "OPENAI_API_KEY": "",
+      "TWITTER_USERNAME": "",
+      "TWITTER_PASSWORD": "",
+      "TWITTER_EMAIL": "",
+      "TWITTER_2FA_SECRET": "",
+      "POST_IMMEDIATELY": "",
+      "ENABLE_ACTION_PROCESSING": "",
+      "MAX_ACTIONS_PROCESSING": "",
+      "POST_INTERVAL_MAX": "",
+      "POST_INTERVAL_MIN": "",
+      "TWITTER_SPACES_ENABLE": "",
+      "ACTION_TIMELINE_TYPE": "",
+      "TWITTER_POLL_INTERVAL": ""
     },
     "voice": {
       "model": ""
@@ -216,6 +242,19 @@ const requiredSchemaV2 = `
   "name": "",
   "settings": {
     "secrets": {
+      "OPENAI_API_KEY": "",
+      "TWITTER_USERNAME": "",
+      "TWITTER_PASSWORD": "",
+      "TWITTER_EMAIL": "",
+      "TWITTER_2FA_SECRET": "",
+      "POST_IMMEDIATELY": "",
+      "ENABLE_ACTION_PROCESSING": "",
+      "MAX_ACTIONS_PROCESSING": "",
+      "POST_INTERVAL_MAX": "",
+      "POST_INTERVAL_MIN": "",
+      "TWITTER_SPACES_ENABLE": "",
+      "ACTION_TIMELINE_TYPE": "",
+      "TWITTER_POLL_INTERVAL": ""
     },
     "voice": {
       "model": ""
