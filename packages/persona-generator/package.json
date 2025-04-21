@@ -37,7 +37,6 @@
     "@fleek-platform/agents-ui": "8.1.2-rc.1",
     "@types/bun": "^1.2.5",
     "abort-controller": "^3.0.0",
-    "biome": "^0.3.3",
     "bun": "^1.2.7",
     "hono": "^4.7.5",
     "node-fetch": "^3.3.2",
@@ -51,6 +50,7 @@
     "node": ">=20.18.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "serverless-vpc-plugin": "^1.0.6",
     "typescript": "^5.8.3"
   }
