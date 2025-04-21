@@ -2,15 +2,17 @@ import OpenAI from "openai";
 import { z } from "zod";
 
 import {
-	systemAssistantRolePrompt,
+	systemAssistantRolePromptV1,
 	systemAssistantRolePromptV2,
-	systemRolePrompt,
+	systemRolePromptV1,
 	systemRolePromptV2,
 } from "@base/prompts/index.js";
 
 export { parseResponseData } from "./utils/json.js";
 
 export type ExecResponse = Promise<z.infer<typeof ResponseSchema>>;
+
+export type CharacterFileVersion = "v1" | "v2";
 
 export const ResponseSchema = z.object({
 	status: z.enum(["success", "error"]),
@@ -47,10 +49,12 @@ export class PersonaGenerator {
 		this.model = model;
 	}
 
-	async generateCharacterfile({
+	async generateCharacterFile({
 		content,
+		version,
 	}: {
 		content: string;
+		version: CharacterFileVersion;
 	}): ExecResponse {
 		const parsedContent = contentSchema.safeParse(content);
 
@@ -61,12 +65,15 @@ export class PersonaGenerator {
 			};
 		}
 
+		const systemContent =
+			version === "v2" ? systemRolePromptV2 : systemRolePromptV1;
+
 		try {
 			const completion = await this.openai.chat.completions.create({
 				messages: [
 					{
 						role: "system",
-						content: systemRolePrompt,
+						content: systemContent,
 					},
 					{
 						role: "user",
@@ -90,157 +97,27 @@ export class PersonaGenerator {
 					error instanceof Error ? error.message : "Unknown error occurred",
 			};
 		}
-	}
-
-	async generateCharacterfileV2({
-		content,
-	}: {
-		content: string;
-	}): ExecResponse {
-		const parsedContent = contentSchema.safeParse(content);
-
-		if (!parsedContent.success) {
-			return {
-				status: "error",
-				error: parsedContent.error.message,
-			};
-		}
-
-		try {
-			const completion = await this.openai.chat.completions.create({
-				messages: [
-					{
-						role: "system",
-						content: systemRolePromptV2,
-					},
-					{
-						role: "user",
-						content,
-					},
-				],
-				model: this.model,
-			});
-
-			const data = completion.choices[0].message.content || "";
-
-			return {
-				status: "success",
-				data,
-				error: "",
-			};
-		} catch (error) {
-			return {
-				status: "error",
-				error:
-					error instanceof Error ? error.message : "Unknown error occurred",
-			};
-		}
-	}
-
-	async assistantQuery({
-		content,
-		messages,
-	}: {
-		content: string;
-		messages: string;
-	}): ExecResponse {
-		try {
-			const completion = await this.openai.chat.completions.create({
-				messages: [
-					{
-						role: "system",
-						content: systemAssistantRolePrompt.replace("$messages", messages),
-					},
-					{
-						role: "user",
-						content,
-					},
-				],
-				model: this.model,
-			});
-
-			const data = completion.choices[0].message.content || "";
-
-			return {
-				status: "success",
-				data,
-				error: "",
-			};
-		} catch (error) {
-			return {
-				status: "error",
-				error:
-					error instanceof Error ? error.message : "Unknown error occurred",
-			};
-		}
-	}
-
-	async assistantQueryStreamV2({
-		content,
-		messages,
-	}: {
-		content: string;
-		messages: string;
-	}) {
-		const stream = await this.openai.chat.completions.create({
-			messages: [
-				{
-					role: "system",
-					content: systemAssistantRolePromptV2.replace("$messages", messages),
-				},
-				{
-					role: "user",
-					content,
-				},
-			],
-			model: this.model,
-			stream: true,
-		});
-
-		return stream;
 	}
 
 	async assistantQueryStream({
 		content,
 		messages,
+		version,
 	}: {
 		content: string;
 		messages: string;
+		version: CharacterFileVersion;
 	}) {
-		const stream = await this.openai.chat.completions.create({
-			messages: [
-				{
-					role: "system",
-					content: systemAssistantRolePrompt.replace("$messages", messages),
-				},
-				{
-					role: "user",
-					content,
-				},
-			],
-			model: this.model,
-			stream: true,
-		});
-
-		return stream;
-	}
-
-	async generateCharacterfileStream({
-		content,
-	}: {
-		content: string;
-	}) {
-		const parsedContent = contentSchema.safeParse(content);
-
-		if (!parsedContent.success) {
-			throw new Error(parsedContent.error.message);
-		}
+		const systemContent =
+			version === "v2"
+				? systemAssistantRolePromptV2
+				: systemAssistantRolePromptV1;
 
 		const stream = await this.openai.chat.completions.create({
 			messages: [
 				{
 					role: "system",
-					content: systemRolePrompt,
+					content: systemContent.replace("$messages", messages),
 				},
 				{
 					role: "user",
