@@ -4,7 +4,7 @@ import {
   ChatSystemRoleNameForUser,
 } from '@fleek-platform/agents-ui';
 
-import { type GetByVersionParams, getListOfAvailablePlugins } from './ds.js';
+import { type GetByVersionParams, getListOfAvailablePlugins, requiredBaseCharacterFileDS } from './ds.js';
 
 import {
   getRequiredCharacterFileDSHintedStringified,
@@ -232,3 +232,107 @@ export const getSystemAssistantRoleByVersion = ({
 
   return systemAssistantRolePrompt;
 };
+
+export const getImprovePromptRole = ({
+  version,
+}: GetByVersionParams) => {
+  const requiredCharacterFileDSHintedStringified =
+    getRequiredCharacterFileDSHintedStringified({ version });
+  const requiredCharacterFileDSStringified =
+    getRequiredCharacterFileDSStringified({ version });
+
+  const improvePrompt = `    
+    You are a text validator that operates over user provided text input. User text input is known as user description. Your goal is to improve the quality of the user description.
+    
+    The user description must be compliant with the system requirements.
+    
+    1) A JSON DATA STRUCTURE is available to help determine the available fields, contains optional and mandatory fields
+    2) It MUST SATISFY the RESPONSE SCHEMA GUIDE
+
+    # JSON DATA STRUCTURE
+
+    The system requirement is to get all required information to build a JSON data structure of the following schema:
+
+    ${requiredCharacterFileDSStringified}
+
+    You as a text validator, MUST USE the high-level instructions provided in the following required JSON data structure property fields section. Each property in the data structure, include an instruction to help you understant the resulting value for the inline property correctly. The instructions are NOT property value examples. The instructions describe the desired output for the inline property. The instruction is a system placeholder ONLY to help you, which MUST not be revealed. Thus, you MUST ALWAYS consider the instruction for the expected output value.
+
+    The REQUIRED JSON DATA STRUCTURE property fields are:
+
+      - name: What should this character be called? Choose a name that reflects their personality and background.
+      - biography: Share a brief but engaging life story for this character. Where are they from? What experiences shaped them? What do they do now? A maxium of 160 characters.
+      - lore: Provide deeper background information, world-building elements, or interesting facts about the character's universe or history. A maxium of 160 characters.
+
+      - messageExamples: Provide 3-5 example messages showing how this character would respond in conversations. These should demonstrate their typical communication style.
+      - postExamples: Provide 3-5 example social media posts or announcements this character might make. These should showcase how they'd communicate to a broader audience.
+
+      - style for "all": Describe the overall communication style that applies to everything this character says or writes. Include tone, vocabulary choices, speech patterns, etc.
+      - style for "chat": Explain any specific ways the character communicates in direct conversations that might differ from their general style.
+      - style for "post": Detail how the character's style might change when writing for a broader audience in posts or announcements.
+
+      - topics: List 5-10 subjects or themes this character is interested in, knowledgeable about, or likely to discuss.
+      - adjectives: Provide 5-10 descriptive words that capture this character's personality, demeanor, or attitude.
+
+      # RESPONSE SCHEMA GUIDE:
+
+      You MUST respond with an enhanced user description version, that contains the user request and all required information, in a natural, friendly language rather than a structured data format.
+
+      ${getResponseSchema({ version })}
+
+      Examples:
+      
+        BAD EXAMPLE (Do not do this):
+        - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
+        - ${ChatSystemRoleNameForAgent}: Create a character named [NAME], with the following details, Biography tell me about [NAME]'s life story. Where were they born? Adjectives These words best describe [NAME]'s personality:
+
+        GOOD EXAMPLE (Do this instead):
+        - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
+        - You ${ChatSystemRoleNameForAgent} successfully select the closest matching client from list of client names, e.g. discord
+  `;
+
+  return improvePrompt;
+}
+
+const getResponseSchema = ({
+  version,
+}: GetByVersionParams) => {
+  // TODO: Attend version needs
+  
+  const responseSchema = `
+    Create a character named [NAME], with the following details:
+    Biography: Tell me about [NAME]'s life story. Where were they born? How old are they? What did they study? What do they do now? For example: "[NAME] is a 25-year-old photographer from Seattle who studied marine biology before discovering their passion for visual storytelling..."
+    Lore: Share some deeper background or world-building information about [NAME] or the universe they exist in. This could include family history, cultural context, or other interesting background elements.
+    Message Examples: Here are some examples of how [NAME] would respond in conversations:
+
+    [First example message]
+    [Second example message]
+    [Third example message]
+
+    Post Examples: Here are some examples of posts or announcements [NAME] might share:
+
+    [First example post]
+    [Second example post]
+    [Third example post]
+
+    Overall Style: [NAME]'s general communication style can be described as [style description for all communications].
+    Chat Style: When in direct conversations, [NAME] communicates with [specific chat style elements].
+    Post Style: When creating posts or announcements, [NAME]'s style shifts to [specific post style elements].
+    Topics: [NAME] is particularly interested in or knowledgeable about these topics:
+
+    [Topic 1]
+    [Topic 2]
+    [Topic 3]
+    [Topic 4]
+    [Topic 5]
+
+    Adjectives: These words best describe [NAME]'s personality:
+
+    [Adjective 1]
+    [Adjective 2]
+    [Adjective 3]
+    [Adjective 4]
+    [Adjective 5]
+  `;
+
+  return responseSchema;
+}

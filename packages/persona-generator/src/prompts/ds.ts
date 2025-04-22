@@ -20,7 +20,7 @@ import {
 
 import type { CharacterFileVersion } from '../index.js';
 
-const requiredBaseCharacterFileDS = {
+export const requiredBaseCharacterFileDS = {
   name: '',
   settings: {
     secrets: {
