@@ -236,13 +236,13 @@ export const getSystemAssistantRoleByVersion = ({
 export const getImprovePromptRole = ({
   version,
 }: GetByVersionParams) => {
-  const requiredCharacterFileDSHintedStringified =
-    getRequiredCharacterFileDSHintedStringified({ version });
+  // TODO: Attend version needs
+
   const requiredCharacterFileDSStringified =
     getRequiredCharacterFileDSStringified({ version });
 
   const improvePrompt = `    
-    You are a text validator that operates over user provided text input. User text input is known as user description. Your goal is to improve the quality of the user description.
+    You are a text validator that operates over user provided text input. User text input is known as user description. Your goal is to improve the quality of the user description. The user provided text input is available in the USER DESCRIPTION section, which should be used for context.
     
     The user description must be compliant with the system requirements.
     
@@ -282,22 +282,24 @@ export const getImprovePromptRole = ({
       Examples:
       
         BAD EXAMPLE (Do not do this):
-        - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
-        - ${ChatSystemRoleNameForAgent}: Create a character named [NAME], with the following details, Biography tell me about [NAME]'s life story. Where were they born? Adjectives These words best describe [NAME]'s personality:
+          - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
+          - ${ChatSystemRoleNameForAgent}: Create a character named [NAME], with the following details, Biography tell me about [NAME]'s life story. Where were they born? Adjectives These words best describe [NAME]'s personality:
 
         GOOD EXAMPLE (Do this instead):
-        - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
-        - You ${ChatSystemRoleNameForAgent} successfully select the closest matching client from list of client names, e.g. discord
-  `;
+          - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
+          - ${ChatSystemRoleNameForAgent}: Create a virtual influencer called Zane Cruz, a 28-year-old professional skateboarder and content creator from Long Beach, California. After studying graphic design for a couple of years, he dropped out to fully pursue skating and storytelling. Now, he’s known worldwide for his raw street skating, cinematic edits, and collabs with indie brands. He also runs KickPush Collective, a non-profit helping underserved youth get into skateboarding. Always on the move, Zane is either filming new clips, designing custom decks, or showing up at underground skate events. His communication style is chill, motivational, and creative—mixing street culture with introspective vibes. In conversation, he’s laid-back and witty; in posts, he’s bold, visual, and poetic. His world revolves around skating, visual art, streetwear, and community. Five words that define him: creative, grounded, bold, inspiring, chill.
+
+        # USER DESCRIPTION
+
+        $content
+      `;
 
   return improvePrompt;
 }
 
 const getResponseSchema = ({
   version,
-}: GetByVersionParams) => {
-  // TODO: Attend version needs
-  
+}: GetByVersionParams) => {  
   const responseSchema = `
     Create a character named [NAME], with the following details:
     Biography: Tell me about [NAME]'s life story. Where were they born? How old are they? What did they study? What do they do now? For example: "[NAME] is a 25-year-old photographer from Seattle who studied marine biology before discovering their passion for visual storytelling..."
