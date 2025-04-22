@@ -5,7 +5,7 @@
 
 The persona-generator is a library designed to transform user input (natural language processing) into structured JSON files representing AI agent personas. It converts user friendly descriptions into detailed character profiles, including secrets, biographical information, lore, and knowledge topics, an utility for building AI-driven apps.
 
-You'll find the project located in [packages/persona-generator](./packages/personage-generator), alongside there's the service built as lambda [packages/persona-generator-service](packages/persona-generator-service).
+You'll find the project located in [packages/persona-generator](./packages/persona-generator), alongside there's the service built as lambda [packages/persona-generator-service](packages/persona-generator-service).
 
 ## Overview
 
