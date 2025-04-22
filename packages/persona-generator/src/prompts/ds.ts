@@ -276,5 +276,5 @@ export const getListOfAvailablePlugins = ({ version }: GetByVersionParams) => {
   const data = getPluginNamesByVersion({
     version,
   });
-  return data.join(', ');
+  return data;
 };
