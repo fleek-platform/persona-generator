@@ -43,7 +43,7 @@ export const getSystemRoleByVersion = ({ version }: GetByVersionParams) => {
     
     ${requiredCharacterFileDSStringified}
 
-    ${getPluginsRuleByVersion({ version: 'v2', index: 5 })}
+    ${getPluginsRuleByVersion({ version, index: 5 })}
     
     6. Deterministic approach to field ordering:
     - Sort all object keys alphabetically

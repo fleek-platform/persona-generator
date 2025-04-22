@@ -2,6 +2,8 @@ import {
   ChatSystemRoleNameForAgent,
   PLUGIN_NAMES as PLUGIN_NAMES_V1,
   PLUGIN_NAMES_V2,
+  CLIENT_NAMES,
+  MODEL_PROVIDER_NAMES,
 } from '@fleek-platform/agents-ui';
 
 import {
@@ -12,6 +14,8 @@ import {
   simulateInteraction,
   strictlyMatchTermList,
   userInputIf,
+  pickMatchTermFromList,
+  strictlyMatchTermListOrFallback,
 } from '../utils/prompt.js';
 
 import type { CharacterFileVersion } from '../index.js';
@@ -85,6 +89,8 @@ const requiredV1CharacterFileDiffProps = {
       },
     ],
   ],
+  clients: [''],
+  modelProvider: [''],
 };
 
 type RequiredCharacterFileDSVersions = CharacterFileVersion;
@@ -177,7 +183,7 @@ const getRequiredCharacterFileDSHintedBase = ({
       ],
     ],
     topics: [fixedNumberExamplesOf(4, 8, 'topics based on user suggestions')],
-    postExamples: [fixedNumberExamplesOf(2, 4, 'post message examples')],
+    postExamples: [fixedNumberExamplesOf(4, 8, 'post message examples')],
     style: {
       all: [
         fixedNumberExamplesOf(
@@ -233,6 +239,8 @@ const getRequiredCharacterFileDSHintedBase = ({
       plugins: [
         strictlyMatchTermList(getListOfAvailablePlugins({ version: 'v1' })),
       ],
+      clients: [strictlyMatchTermListOrFallback(CLIENT_NAMES, 'clients', 'direct')],
+      modelProvider: pickMatchTermFromList(MODEL_PROVIDER_NAMES, 'model', 1),
     };
   }
 

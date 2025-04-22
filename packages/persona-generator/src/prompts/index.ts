@@ -16,5 +16,5 @@ export const systemAssistantRolePromptV1 = getSystemAssistantRoleByVersion({
 });
 
 export const systemAssistantRolePromptV2 = getSystemAssistantRoleByVersion({
-  version: 'v1',
+  version: 'v2',
 });
