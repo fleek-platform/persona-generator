@@ -32,51 +32,51 @@ api.use('/*', cors({
   credentials: true,
 }));
 
-api.use(
-  rateLimiter({
-    windowMs: 1 * 60 * 1000,
-    limit: 60,
-    standardHeaders: false,
-    keyGenerator: (ctx) => {      
-      try {
-        const forwardedFor = ctx.req.header('x-forwarded-for');
-        const sourceIp = 
-          (forwardedFor ? forwardedFor.split(',')[0].trim() : '') ||
-          // TODO: This only applies for gw and lb
-          // which don't support stream response, thus
-          // we never need to lookup or expect them.
-          // Since there aren't alternatives? We might
-          // want to deny the request going forward?
-          ctx.req.header('x-amzn-source-ip') ||
-          ctx.req.header('x-amzn-trace-id') || 
-          '';
+// api.use(
+//   rateLimiter({
+//     windowMs: 1 * 60 * 1000,
+//     limit: 60,
+//     standardHeaders: false,
+//     keyGenerator: (ctx) => {      
+//       try {
+//         const forwardedFor = ctx.req.header('x-forwarded-for');
+//         const sourceIp = 
+//           (forwardedFor ? forwardedFor.split(',')[0].trim() : '') ||
+//           // TODO: This only applies for gw and lb
+//           // which don't support stream response, thus
+//           // we never need to lookup or expect them.
+//           // Since there aren't alternatives? We might
+//           // want to deny the request going forward?
+//           ctx.req.header('x-amzn-source-ip') ||
+//           ctx.req.header('x-amzn-trace-id') || 
+//           '';
 
-        if (!sourceIp) {
-          throw new Error('No valid client IP found for rate limiting');
-        }
+//         if (!sourceIp) {
+//           throw new Error('No valid client IP found for rate limiting');
+//         }
 
-        return sourceIp;
-      } catch (err) {
-        console.error('Rate limiter error:', err);
+//         return sourceIp;
+//       } catch (err) {
+//         console.error('Rate limiter error:', err);
 
-        return UNKNOWN_IP_ADDRESS;
-      }
-    },
-    // TODO: set `store` as redisStore https://www.npmjs.com/package/@hono-rate-limiter/redis
-  })
-);
+//         return UNKNOWN_IP_ADDRESS;
+//       }
+//     },
+//     // TODO: set `store` as redisStore https://www.npmjs.com/package/@hono-rate-limiter/redis
+//   })
+// );
 
-api.use('*', async (ctx, next) => {
-  if (ctx.req.path.endsWith(HEALTH_ENDPOINT)) {
-    return await next();
-  }
+// api.use('*', async (ctx, next) => {
+//   if (ctx.req.path.endsWith(HEALTH_ENDPOINT)) {
+//     return await next();
+//   }
 
-  if (ctx.req.path.endsWith('stream-test')) {
-    return await next();
-  }
+//   if (ctx.req.path.endsWith('stream-test')) {
+//     return await next();
+//   }
 
-  return authMiddleware(ctx, next);
-});
+//   return authMiddleware(ctx, next);
+// });
 
 api.get(HEALTH_ENDPOINT, (ctx) => ctx.text('I am here live. I am not a cat!'));
 
@@ -89,7 +89,7 @@ v1.post('/generate', async (ctx) => {
     model,
   });
 
-  const { data, error, status } = await personaGenerator.generateCharacterfile({ content });
+  const { data, error, status } = await personaGenerator.generateCharacterFile({ content });
 
   if (!data || error || status !== 'success') {
     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
@@ -147,7 +147,7 @@ v2.post('/generate', async (ctx) => {
     model,
   });
 
-  const { data, error, status } = await personaGenerator.generateCharacterfileV2({ content });
+  const { data, error, status } = await personaGenerator.generateCharacterFile({ content });
 
   if (!data || error || status !== 'success') {
     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
@@ -168,7 +168,7 @@ v2.post('/assistant/stream', async (ctx) => {
     model,
   });
 
-  const responseStream = await personaGenerator.assistantQueryStreamV2({ content, messages });
+  const responseStream = await personaGenerator.assistantQueryStream({ content, messages });
 
   return streamText(ctx, async (streamWriter) => {
     try {

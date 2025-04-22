@@ -26,5 +26,5 @@ export const MODEL_PROVIDER_NAMES = [
   'redpill',
   'together',
   'venice',
-  'volengine'
+  'volengine',
 ] as const;

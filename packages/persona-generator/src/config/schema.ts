@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import type { Character } from '@base/types';
-import { MODEL_PROVIDER_NAMES } from './modelProviders';
 import { CLIENT_NAMES } from './clients';
+import { MODEL_PROVIDER_NAMES } from './modelProviders';
 
 export const settingsSchema = z.object({
   secrets: z
@@ -32,9 +32,7 @@ export type SettingsSchema = z.infer<typeof settingsSchema>;
 export const characterfileSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   username: z.string().optional(),
-  plugins: z.array(
-    z.string(),
-  ),
+  plugins: z.array(z.string()),
   modelProvider: z.enum(MODEL_PROVIDER_NAMES, {
     errorMap: (_, __) => {
       return { message: 'Unsupported or invalid model provider' };
