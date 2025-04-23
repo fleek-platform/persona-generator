@@ -8,6 +8,8 @@
   },
   "workspaces": ["packages/*"],
   "scripts": {
+    "build:libs": "bun run build:persona-generator",
+    "build:persona-generator": "bun --filter \"./packages/persona-generator\" build",
     "dev": "scripts/dev-watcher",
     "service:build": "sam build --build-in-source --parameter-overrides Environment=staging",
     "service:deploy": "bun run service:build && ./scripts/dev-deploy",
