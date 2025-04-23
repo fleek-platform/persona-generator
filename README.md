@@ -16,6 +16,7 @@ You'll find the project located in [packages/persona-generator](./packages/perso
 - [⚕ Lambda](#lambda)
   - [Details](#details)
   - [Commands](#commands)
+  - [Lint Serverless setup](#lint-serverless-setup)
   - [Service Preview](#service-preview)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
@@ -282,6 +283,17 @@ Get service details:
 
 ```sh
 bun run service:info
+```
+
+### Lint Serverless setup
+
+The Lint Serverless validates infrastructure-as-code template against recommended practices by [AWS Serverless team](https://awslabs.github.io/serverless-rules/).
+
+> [!INFO]
+> You must have the python libraries installed, check the instructions [here](https://awslabs.github.io/serverless-rules/cfn-lint/)
+
+```sh
+bun run lint:serverless
 ```
 
 ### Service Preview
