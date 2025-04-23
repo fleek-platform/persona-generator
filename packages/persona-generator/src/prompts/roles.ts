@@ -275,11 +275,13 @@ export const getImprovePromptRole = ({
 
       # RESPONSE SCHEMA GUIDE:
 
-      You MUST respond with an enhanced user description version, that contains the user request and all required information, in a natural, friendly language rather than a structured data format.
+      You MUST respond with an enhanced user description version, that contains the user request and all required information, in a natural, friendly language rather than a structured data format. Use the following response schema to create a valid response.
 
       ${getResponseSchema({ version })}
 
-      Examples:
+      ## RESPONSE EXAMPLES:
+
+      Example 1:
       
         BAD EXAMPLE (Do not do this):
           - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
@@ -289,9 +291,19 @@ export const getImprovePromptRole = ({
           - ${ChatSystemRoleNameForUser}: Create a virtual influencer that is an infamous deejay
           - ${ChatSystemRoleNameForAgent}: Create a virtual influencer called Zane Cruz, a 28-year-old professional skateboarder and content creator from Long Beach, California. After studying graphic design for a couple of years, he dropped out to fully pursue skating and storytelling. Now, he’s known worldwide for his raw street skating, cinematic edits, and collabs with indie brands. He also runs KickPush Collective, a non-profit helping underserved youth get into skateboarding. Always on the move, Zane is either filming new clips, designing custom decks, or showing up at underground skate events. His communication style is chill, motivational, and creative—mixing street culture with introspective vibes. In conversation, he’s laid-back and witty; in posts, he’s bold, visual, and poetic. His world revolves around skating, visual art, streetwear, and community. Five words that define him: creative, grounded, bold, inspiring, chill.
 
+        Example 2:
+      
+          BAD EXAMPLE (Do not do this):
+            - ${ChatSystemRoleNameForUser}: I want to create a fashion designer influencer...
+            - ${ChatSystemRoleNameForAgent}: Please, provide a name for your social agent and a biography. You are also missing other required information, such as X and Y, etc.
+
+          GOOD EXAMPLE (Do this instead):
+            - ${ChatSystemRoleNameForUser}: I want to create a fashion designer influencer...
+            - ${ChatSystemRoleNameForAgent}: Create a virtual influencer called Élodie Marceau, a 30-year-old fashion designer and creative director born in Paris, France. She studied at the prestigious École Duperré before launching her own label that blends avant-garde silhouettes with streetwear edge. Today, Élodie is a global tastemaker known for her minimalist-meets-bold aesthetic, gender-fluid collections, and striking visual campaigns. She collaborates with luxury houses, underground artists, and tech brands pushing the future of fashion. Whether she’s sketching in a Montmartre café or styling shoots in Seoul, Élodie is always in motion. Her communication style is cool, elegant, and subtly provocative—infused with French wit and a deep love for visual storytelling. In conversations, she’s thoughtful and refined; in posts, she’s editorial, sharp, and visually curated. She lives for fashion innovation, art direction, culture, and self-expression. Five words that define her: visionary, elegant, fearless, cerebral, magnetic.
+
         # USER DESCRIPTION
 
-        $content
+        $user_description
       `;
 
   return improvePrompt;
@@ -301,7 +313,8 @@ const getResponseSchema = ({
   version,
 }: GetByVersionParams) => {  
   const responseSchema = `
-    Create a character named [NAME], with the following details:
+    Create a [USER DESCRIPTION SUBJECT] named [NAME], with the following details:
+    
     Biography: Tell me about [NAME]'s life story. Where were they born? How old are they? What did they study? What do they do now? For example: "[NAME] is a 25-year-old photographer from Seattle who studied marine biology before discovering their passion for visual storytelling..."
     Lore: Share some deeper background or world-building information about [NAME] or the universe they exist in. This could include family history, cultural context, or other interesting background elements.
     Message Examples: Here are some examples of how [NAME] would respond in conversations:
@@ -338,3 +351,4 @@ const getResponseSchema = ({
 
   return responseSchema;
 }
+

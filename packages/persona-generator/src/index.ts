@@ -6,6 +6,8 @@ import {
   systemAssistantRolePromptV2,
   systemRolePromptV1,
   systemRolePromptV2,
+  improvePromptRoleV1,
+  improvePromptRoleV2,
 } from '@base/prompts/index.js';
 
 export { parseResponseData } from './utils/json.js';
@@ -118,6 +120,36 @@ export class PersonaGenerator {
         {
           role: 'system',
           content: systemContent.replace('$messages', messages),
+        },
+        {
+          role: 'user',
+          content,
+        },
+      ],
+      model: this.model,
+      stream: true,
+    });
+
+    return stream;
+  }
+
+  async promptImproveStream({
+    content,
+    version,
+  }: {
+    content: string;
+    version: CharacterFileVersion;
+  }) {
+    const importPromptRole =
+      version === 'v2'
+        ? improvePromptRoleV2
+        : improvePromptRoleV1;
+
+    const stream = await this.openai.chat.completions.create({
+      messages: [
+        {
+          role: 'system',
+          content: importPromptRole.replace('$user_description', content),
         },
         {
           role: 'user',

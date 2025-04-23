@@ -182,6 +182,32 @@ v2.post('/assistant/stream', async (ctx) => {
   });
 });
 
+v2.post('/improve_prompt/stream', async (ctx) => {
+  const { content } = await ctx.req.json();
+  if (typeof content !== 'string' || !content) {
+    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
+  }
+
+  const personaGenerator = new PersonaGenerator({
+    apiKey,
+    baseURL,
+    model,
+  });
+
+  const responseStream = await personaGenerator.promptImproveStream({ content, version: 'v2' });
+
+  return streamText(ctx, async (streamWriter) => {
+    try {
+      for await (const chunk of responseStream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        await streamWriter.write(content);
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+    }
+  });
+});
+
 // [WARN]: Register the routes before mounting to main api
 api.route('/v1', v1);
 api.route('/v2', v2);
