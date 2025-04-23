@@ -38,6 +38,7 @@ Resources:
       Handler: index.handler
       CodeUri: packages/persona-generator-service/
       PackageType: Zip
+      MemorySize: 256
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
