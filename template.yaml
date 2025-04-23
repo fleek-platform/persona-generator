@@ -40,6 +40,7 @@ Resources:
       CodeUri: packages/persona-generator-service/
       PackageType: Zip
       MemorySize: 256
+      Tracing: Active
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
@@ -57,6 +58,10 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - src/index.ts
+      cfn-lint:
+        config:
+          ignore_checks:
+            - WS1004
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
