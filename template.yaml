@@ -27,6 +27,7 @@ Parameters:
 
 Globals:
   Function:
+    # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html#runtimes-supported
     Runtime: nodejs22.x
     Architectures: [arm64]
     Timeout: 40
