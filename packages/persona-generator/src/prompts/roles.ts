@@ -110,7 +110,7 @@ const getPluginsRuleByVersion = ({
   index,
 }: GetByVersionParams & { index: number }) => {
   const listOfAvailablePlugins = getListOfAvailablePlugins({
-    version: 'v2',
+    version,
   }).join(', ');
   const autofunPlugins = mandatoryPluginsForAutofun.join(', ');
 
