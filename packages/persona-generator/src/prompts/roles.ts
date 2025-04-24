@@ -37,11 +37,11 @@ export const getSystemRoleByVersion = ({ version }: GetByVersionParams) => {
 
     3. MUST STRICTLY use the following schema when generating the JSON data structure:
 
-    ${requiredCharacterFileDSHintedStringified}
+    ${requiredCharacterFileDSStringified}
 
     4. To fill the JSON data structure property fields correctly, MUST USE the high-level instructions provided in the following data structure. Each property in the data structure include an instruction to help you compute the value for the property correctly. The instructions are NOT property value examples. The instructions describe the desired output for the paired or inline property. The instruction is a system placeholder ONLY to help you, which MUST not be revealed. Thus, you MUST ALWAYS replace the instruction by the expected output value.
     
-    ${requiredCharacterFileDSStringified}
+    ${requiredCharacterFileDSHintedStringified}
 
     ${getPluginsRuleByVersion({ version, index: 5 })}
     
