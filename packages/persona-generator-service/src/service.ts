@@ -18,6 +18,7 @@ const v2 = new Hono();
 export const api = new Hono();
 
 const HEALTH_ENDPOINT = '/health';
+const IMPROVE_PROMPT_ENDPOINT = '/improve_prompt/stream';
 const UNKNOWN_IP_ADDRESS = '0.0.0.0';
 
 // TODO: Set allowed origin list
@@ -75,6 +76,10 @@ api.use('*', async (ctx, next) => {
     return await next();
   }
 
+  if (ctx.req.path.endsWith(IMPROVE_PROMPT_ENDPOINT)) {
+    return await next();
+  }
+
   return authMiddleware(ctx, next);
 });
 
@@ -111,6 +116,32 @@ v1.post('/assistant/stream', async (ctx) => {
   });
 
   const responseStream = await personaGenerator.assistantQueryStream({ content, messages, version: 'v1' });
+
+  return streamText(ctx, async (streamWriter) => {
+    try {
+      for await (const chunk of responseStream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        await streamWriter.write(content);
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+    }
+  });
+});
+
+v1.post(IMPROVE_PROMPT_ENDPOINT, async (ctx) => {
+  const { content } = await ctx.req.json();
+  if (typeof content !== 'string' || !content) {
+    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
+  }
+
+  const personaGenerator = new PersonaGenerator({
+    apiKey,
+    baseURL,
+    model,
+  });
+
+  const responseStream = await personaGenerator.promptImproveStream({ content, version: 'v1' });
 
   return streamText(ctx, async (streamWriter) => {
     try {
@@ -169,6 +200,32 @@ v2.post('/assistant/stream', async (ctx) => {
   });
 
   const responseStream = await personaGenerator.assistantQueryStream({ content, messages, version: 'v2' });
+
+  return streamText(ctx, async (streamWriter) => {
+    try {
+      for await (const chunk of responseStream) {
+        const content = chunk.choices[0]?.delta?.content || '';
+        await streamWriter.write(content);
+      }
+    } catch (error) {
+      console.error('Streaming error:', error);
+    }
+  });
+});
+
+v2.post(IMPROVE_PROMPT_ENDPOINT, async (ctx) => {
+  const { content } = await ctx.req.json();
+  if (typeof content !== 'string' || !content) {
+    return ctx.json({ status: 'error', error: 'Unexpected request' }, 400);
+  }
+
+  const personaGenerator = new PersonaGenerator({
+    apiKey,
+    baseURL,
+    model,
+  });
+
+  const responseStream = await personaGenerator.promptImproveStream({ content, version: 'v2' });
 
   return streamText(ctx, async (streamWriter) => {
     try {

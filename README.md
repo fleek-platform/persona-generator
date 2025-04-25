@@ -16,7 +16,9 @@ You'll find the project located in [packages/persona-generator](./packages/perso
 - [⚕ Lambda](#lambda)
   - [Details](#details)
   - [Commands](#commands)
+  - [Lint Serverless setup](#lint-serverless-setup)
   - [Service Preview](#service-preview)
+  - [Endpoints](#endpoints)
 - [🔎 Changeset](#changeset)
 - [👾 Command-line interface](#command-line-interface)
 - [🙏 Contributing](#-contributing)
@@ -284,6 +286,17 @@ Get service details:
 bun run service:info
 ```
 
+### Lint Serverless setup
+
+The Lint Serverless validates infrastructure-as-code template against recommended practices by [AWS Serverless team](https://awslabs.github.io/serverless-rules/).
+
+> [!INFO]
+> You must have the python libraries installed, check the instructions [here](https://awslabs.github.io/serverless-rules/cfn-lint/)
+
+```sh
+bun run lint:serverless
+```
+
 ### Service Preview
 
 The service previewer provides the mechnanism to start the dev mode of what AWS provides as a service.
@@ -303,6 +316,21 @@ Start the lambda preview locally by:
 
 ```sh
 pnpm service:preview
+```
+
+### Endpoints
+
+Locate the endpoints at [service.ts](packages/persona-generator-service/src/service.ts)
+
+For example:
+
+```
+GET /health
+POST v2/improve_prompt/stream
+POST v2/generate
+POST v2/assistant/stream
+POST v1/generate
+POST v1/assistant/stream
 ```
 
 ## Changeset

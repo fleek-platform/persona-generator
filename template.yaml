@@ -27,7 +27,8 @@ Parameters:
 
 Globals:
   Function:
-    Runtime: nodejs20.x
+    # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html#runtimes-supported
+    Runtime: nodejs22.x
     Architectures: [arm64]
     Timeout: 40
 
@@ -38,6 +39,8 @@ Resources:
       Handler: index.handler
       CodeUri: packages/persona-generator-service/
       PackageType: Zip
+      MemorySize: 256
+      Tracing: Active
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
@@ -55,6 +58,10 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - src/index.ts
+      cfn-lint:
+        config:
+          ignore_checks:
+            - WS1004
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution

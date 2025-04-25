@@ -1,6 +1,7 @@
 import {
   getSystemAssistantRoleByVersion,
   getSystemRoleByVersion,
+  getImprovePromptRole,
 } from '../prompts/roles.js';
 
 export const systemRolePromptV1 = getSystemRoleByVersion({
@@ -16,5 +17,13 @@ export const systemAssistantRolePromptV1 = getSystemAssistantRoleByVersion({
 });
 
 export const systemAssistantRolePromptV2 = getSystemAssistantRoleByVersion({
+  version: 'v2',
+});
+
+export const improvePromptRoleV1 = getImprovePromptRole({
+  version: 'v1',
+});
+
+export const improvePromptRoleV2 = getImprovePromptRole({
   version: 'v2',
 });
