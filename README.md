@@ -299,7 +299,7 @@ bun run lint:serverless
 
 ### Service Preview
 
-The service previewer provides the mechnanism to start the dev mode of what AWS provides as a service.
+The service previewer provides the mechanism to start the dev mode of what AWS provides as a service.
 
 > [!WARNING]  
 > To operate locally, you must have aws configured.
