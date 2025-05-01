@@ -299,7 +299,6 @@ const getResponseSchema = ({
     Create a [USER DESCRIPTION SUBJECT] named [NAME], with the following details:
     
     Biography: Tell me about [NAME]'s life story. Where were they born? How old are they? What did they study? What do they do now? For example: "[NAME] is a 25-year-old photographer from Seattle who studied marine biology before discovering their passion for visual storytelling..."
-    Lore: Share some deeper background or world-building information about [NAME] or the universe they exist in. This could include family history, cultural context, or other interesting background elements.
     Message Examples: Here are some examples of how [NAME] would respond in conversations:
 
     [First example message]
@@ -315,21 +314,6 @@ const getResponseSchema = ({
     Overall Style: [NAME]'s general communication style can be described as [style description for all communications].
     Chat Style: When in direct conversations, [NAME] communicates with [specific chat style elements].
     Post Style: When creating posts or announcements, [NAME]'s style shifts to [specific post style elements].
-    Topics: [NAME] is particularly interested in or knowledgeable about these topics:
-
-    [Topic 1]
-    [Topic 2]
-    [Topic 3]
-    [Topic 4]
-    [Topic 5]
-
-    Adjectives: These words best describe [NAME]'s personality:
-
-    [Adjective 1]
-    [Adjective 2]
-    [Adjective 3]
-    [Adjective 4]
-    [Adjective 5]
   `;
 
   return responseSchema;
