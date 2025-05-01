@@ -236,9 +236,7 @@ const getRequiredCharacterFileDSHintedBase = ({
           },
         ],
       ],
-      plugins: [
-        strictlyMatchTermList(getListOfAvailablePlugins({ version: 'v1' })),
-      ],
+      plugins: [],
       clients: [strictlyMatchTermListOrFallback(CLIENT_NAMES, 'clients', 'direct')],
       modelProvider: pickMatchTermFromList(MODEL_PROVIDER_NAMES, 'model', 1),
     };
