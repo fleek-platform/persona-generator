@@ -1,8 +1,6 @@
 import { z } from 'zod';
-
-import type { Character } from '@base/types';
-import { CLIENT_NAMES } from './clients';
-import { MODEL_PROVIDER_NAMES } from './modelProviders';
+import { CLIENT_NAMES } from './clients.js';
+import { MODEL_PROVIDER_NAMES } from './modelProviders.js';
 
 export const settingsSchema = z.object({
   secrets: z
@@ -75,6 +73,6 @@ export const characterfileSchema = z.object({
   adjectives: z
     .array(z.string().min(1))
     .min(1, 'At least one adjective is required'),
-}) satisfies z.ZodType<Character>;
+});
 
 export type CharacterfileSchema = z.infer<typeof characterfileSchema>;

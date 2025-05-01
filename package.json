@@ -6,7 +6,9 @@
   "peerDependencies": {
     "typescript": "^5"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build:libs": "bun run build:persona-generator",
     "build:persona-generator": "bun --filter \"./packages/persona-generator\" build",
@@ -20,6 +22,7 @@
     "lint:serverless": "./scripts/dev-lint-serverless"
   },
   "dependencies": {
+    "@fleek-platform/agents-ui": "8.17.1-dev.1",
     "dotenv": "^16.4.7"
   }
 }
