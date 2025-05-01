@@ -90,7 +90,7 @@ const requiredV1CharacterFileDiffProps = {
     ],
   ],
   clients: [''],
-  modelProvider: [''],
+  modelProvider: null,
 };
 
 type RequiredCharacterFileDSVersions = CharacterFileVersion;
@@ -238,7 +238,7 @@ const getRequiredCharacterFileDSHintedBase = ({
       ],
       plugins: [],
       clients: [strictlyMatchTermListOrFallback(CLIENT_NAMES, 'clients', 'direct')],
-      modelProvider: '',
+      modelProvider: null,
     };
   }
 
