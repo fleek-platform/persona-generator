@@ -239,6 +239,45 @@ v2.post(IMPROVE_PROMPT_ENDPOINT, async (ctx) => {
   });
 });
 
+api.all('social-agent/*', async (ctx) => {
+  try {
+    const path = ctx.req.path.replace('/social-agent', '');
+    
+    const url = new URL(ctx.req.url);
+    const queryString = url.search;
+
+    const TARGET_API_BASE_URL = 'https://social-agent.dev.platform.fleeksandbox.xyz';
+    
+    const targetUrl = `${TARGET_API_BASE_URL}${path}${queryString}`;
+    
+    const requestInit: RequestInit = {
+      method: ctx.req.method,
+      headers: {
+        'Content-Type': ctx.req.header('content-type') || 'application/json',
+        'Authorization': ctx.req.header('authorization') || '',
+        'Accept': ctx.req.header('accept') || '*/*',
+      }
+    };
+    
+    if (ctx.req.method !== 'GET' && ctx.req.method !== 'HEAD') {
+      if (ctx.req.header('content-type')?.includes('application/json')) {
+        const body = await ctx.req.json();
+        requestInit.body = JSON.stringify(body);
+      } else {
+        const body = await ctx.req.text();
+        requestInit.body = body;
+      }
+    }
+    
+    const response = await fetch(targetUrl, requestInit);
+
+    const data = await response.json();
+    return ctx.json(data);
+  } catch (error) {
+    console.error('Proxy error:', error);
+  }
+});
+
 // [WARN]: Register the routes before mounting to main api
 api.route('/v1', v1);
 api.route('/v2', v2);
