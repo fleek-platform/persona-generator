@@ -31,21 +31,21 @@ export const characterfileSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   username: z.string().optional(),
   plugins: z.array(z.string()),
-  modelProvider: z.enum(MODEL_PROVIDER_NAMES, {
-    errorMap: (_, __) => {
-      return { message: 'Unsupported or invalid model provider' };
-    },
-  }),
-  clients: z
-    .array(
-      z.enum(CLIENT_NAMES, {
-        errorMap: (_, __) => {
-          return { message: 'Unsupported or invalid client' };
-        },
-      }),
-    )
-    .min(1, 'At least one client is required'),
-  // settings: settingsSchema,
+  settings: z.object({
+    secrets: z.object({
+      POST_IMMEDIATELY: z.string().default('true'),
+      ENABLE_ACTION_PROCESSING: z.string().default('true'),
+      MAX_ACTIONS_PROCESSING: z.string().default('10'),
+      POST_INTERVAL_MAX: z.string().default('180'),
+      POST_INTERVAL_MIN: z.string().default('90'),
+      TWITTER_SPACES_ENABLE: z.string().default('false'),
+      ACTION_TIMELINE_TYPE: z.string().default('foryou'),
+      TWITTER_POLL_INTERVAL: z.string().default('120'),
+    }).default({}),
+    voice: z.object({
+      model: z.string().default('en_GB-alan-medium'),
+    }).default({}),
+  }).default({}),
   bio: z.array(z.string().min(1, 'Bio is required')),
   lore: z.array(z.string().min(1, 'Lore is required')),
   knowledge: z.array(z.string()).optional(),
