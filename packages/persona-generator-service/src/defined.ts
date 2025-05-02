@@ -3,6 +3,7 @@ export type Defined = {
   PUBLIC_OPENAI_COMPATIBLE_API_URL?: string;
   PUBLIC_OPENAI_COMPATIBLE_MODEL?: string;
   PUBLIC_FLEEK_REST_API_URL?: string;
+  PUBLIC_SOCIAL_AGENT_API_URL?: string;
 };
 
 export const defined: Defined = {
@@ -10,6 +11,7 @@ export const defined: Defined = {
   PUBLIC_OPENAI_COMPATIBLE_API_URL: process.env.PUBLIC_OPENAI_COMPATIBLE_API_URL,
   PUBLIC_OPENAI_COMPATIBLE_MODEL: process.env.PUBLIC_OPENAI_COMPATIBLE_MODEL,
   PUBLIC_FLEEK_REST_API_URL: process.env.PUBLIC_FLEEK_REST_API_URL,
+  PUBLIC_SOCIAL_AGENT_API_URL: process.env.PUBLIC_SOCIAL_AGENT_API_URL,
 };
 
 export const getDefined = (key: keyof typeof defined): string => {
