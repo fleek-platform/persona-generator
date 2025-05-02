@@ -51,6 +51,7 @@ export const getSystemRoleByVersion = ({ version }: GetByVersionParams) => {
     - settings.secrets.ACTION_TIMELINE_TYPE: foryou
     - settings.secrets.TWITTER_POLL_INTERVAL: 120
     - settings.voice.model: en_GB-alan-medium
+    - clients: Set it to direct
 
     ${getPluginsRuleByVersion({ version, index: 4 })}
     

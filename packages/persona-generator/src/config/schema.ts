@@ -46,6 +46,7 @@ export const characterfileSchema = z.object({
       model: z.string().default('en_GB-alan-medium'),
     }).default({}),
   }).default({}),
+  clients: z.array(z.string().min(1, 'Clients is required')).default(["direct"]),
   bio: z.array(z.string().min(1, 'Bio is required')),
   lore: z.array(z.string().min(1, 'Lore is required')),
   knowledge: z.array(z.string()).optional(),
