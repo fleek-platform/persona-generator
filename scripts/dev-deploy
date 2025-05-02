@@ -36,4 +36,5 @@ sam deploy \
     PublicOpenAIApiUrl="$PUBLIC_OPENAI_COMPATIBLE_API_URL" \
     PublicOpenAIModel="$PUBLIC_OPENAI_COMPATIBLE_MODEL" \
     PublicFleekRestApiUrl="$PUBLIC_FLEEK_REST_API_URL" \
+    PublicSocialAgentApiUrl="$PUBLIC_SOCIAL_AGENT_API_URL" \
   --capabilities CAPABILITY_IAM

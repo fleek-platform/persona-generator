@@ -11,6 +11,7 @@ import { authMiddleware } from './middleware.js';
 const apiKey = getDefined('PRIVATE_OPENAI_COMPATIBLE_API_KEY');
 const baseURL = getDefined('PUBLIC_OPENAI_COMPATIBLE_API_URL');
 const model = getDefined('PUBLIC_OPENAI_COMPATIBLE_MODEL');
+const socialAgentApiUrl = getDefined('PUBLIC_SOCIAL_AGENT_API_URL');
 
 const v1 = new Hono();
 const v2 = new Hono();
@@ -27,7 +28,7 @@ api.use('/*', cors({
   allowMethods: ['GET', 'POST'],
   // TODO: Ideally we'd like to allow x-project-id
   // as we shouldn't get from accessToken
-  // The accessToken shouldn't have projectId in it?!
+  // The accessToken shouldn't have projectId in it...
   allowHeaders: ['content-type', 'authorization', 'accept', 'priority'],
   maxAge: 86400,
   credentials: true,
@@ -261,6 +262,39 @@ v2.post(IMPROVE_PROMPT_ENDPOINT, async (ctx) => {
       console.error('Streaming error:', error);
     }
   });
+});
+
+// Temporary proxy due to an issue in the social agent
+// service due to CORS
+api.all('social-agent/*', async (ctx) => {
+  try {
+    const path = ctx.req.path.replace('/social-agent', '');
+    
+    const url = new URL(ctx.req.url);
+    const queryString = url.search;
+    
+    const targetUrl = `${socialAgentApiUrl}${path}${queryString}`;
+    
+    const requestInit: RequestInit = {
+      method: ctx.req.method,
+      headers: {
+        'Content-Type': ctx.req.header('content-type') || 'application/json',
+        'Authorization': ctx.req.header('authorization') || '',
+        'Accept': ctx.req.header('accept') || '*/*',
+      }
+    };
+    
+    if (ctx.req.method !== 'GET' && ctx.req.method !== 'HEAD') {
+      requestInit.body = JSON.stringify(ctx.req.json());
+    }
+    
+    const response = await fetch(targetUrl, requestInit);
+
+    const data = await response.json();
+    return ctx.json(data);
+  } catch (error) {
+    console.error('Proxy error:', error);
+  }
 });
 
 // [WARN]: Register the routes before mounting to main api
