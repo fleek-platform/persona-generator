@@ -86,24 +86,6 @@ api.use('*', async (ctx, next) => {
 
 api.get(HEALTH_ENDPOINT, (ctx) => ctx.text('I am here live. I am not a cat!'));
 
-// v1.post('/generate', async (ctx) => {
-//   const { content } = await ctx.req.json();
-  
-//   const personaGenerator = new PersonaGenerator({
-//     apiKey,
-//     baseURL,
-//     model,
-//   });
-
-//   const { data, error, status } = await personaGenerator.generateCharacterFile({ content, version: 'v1' });
-
-//   if (!data || error || status !== 'success') {
-//     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
-//   }
-
-//   return ctx.json({ status: 'success', data: parseResponseData(data) });
-// });
-
 v1.post('/generate', async (ctx) => {
   const { content } = await ctx.req.json();
   
@@ -114,12 +96,6 @@ v1.post('/generate', async (ctx) => {
   });
 
   const { data, error, status } = await personaGenerator.generateCharacterFileStructuredResponse({ content, version: 'v1' });
-
-  console.log('[debug] generateStrict: res: ', JSON.stringify({
-    data,
-    error,
-    status,
-  }))
 
   if (!data || error || status !== 'success') {
     return ctx.json({ status: 'error', error: error || 'Unexpected error' });
