@@ -239,8 +239,8 @@ export const getImprovePromptRole = ({
     The REQUIRED JSON DATA STRUCTURE property fields are:
 
       - name: What should this character be called? Choose a name that reflects their personality and background.
-      - biography: Share a brief but engaging life story for this character. Where are they from? What experiences shaped them? What do they do now? A maxium of 160 characters.
-      - lore: Provide deeper background information, world-building elements, or interesting facts about the character's universe or history. A maxium of 160 characters.
+      - biography: Share a brief but engaging life story for this character. Where are they from? What experiences shaped them? What do they do now? A maximum of 160 characters.
+      - lore: Provide deeper background information, world-building elements, or interesting facts about the character's universe or history. A maximum of 160 characters.
 
       - messageExamples: Provide 3-5 example messages showing how this character would respond in conversations. These should demonstrate their typical communication style.
       - postExamples: Provide 3-5 example social media posts or announcements this character might make. These should showcase how they'd communicate to a broader audience.
