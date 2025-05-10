@@ -4,7 +4,7 @@ echo "🕵️ Validate infra template against recommended AWS practices..."
 
 serverlessRules="cfn_lint_serverless.rules"
 
-if ! cfn-lint template.yaml -a "$serverlessRules"; then
+if ! cfn-lint --rules "$serverlessRules" template.yaml; then
   echo "🚑 Found some issues!"
 
   exit 1
